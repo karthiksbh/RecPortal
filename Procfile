@@ -1,1 +1,1 @@
-web:gunicorn recportal.wsgi --log-file
+web: gunicorn recportal.wsgi --log-file - 
