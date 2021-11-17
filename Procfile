@@ -1,1 +1,1 @@
-web: waitress-serve --port=$PORT recportal.wsgi:application
+web: gunicorn recportal.wsgi --log-file - 
