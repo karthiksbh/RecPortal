@@ -143,5 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 django_heroku.settings(locals())
 
+# New add
+
 options = DATABASES['default'].get('OPTIONS', {})
 options.pop('sslmode', None)
