@@ -19,7 +19,8 @@ import dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
@@ -142,8 +143,4 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 django_heroku.settings(locals())
-
-# New add
-
-options = DATABASES['default'].get('OPTIONS', {})
-options.pop('sslmode', None)
+del DATABASES['default']['OPTIONS']['sslmode']
