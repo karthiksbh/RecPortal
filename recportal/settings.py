@@ -37,7 +37,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['recportal-iete.herokuapp.com', '127.0.0.1']
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'app.User'
 
@@ -129,13 +129,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
