@@ -33,7 +33,7 @@ class RegisterView(APIView):
 
         except Exception as e:
 
-            return Response({'status': 404, 'error': 'Error'})
+            return Response({'status': 404, 'error': serializer.errors})
 
 
 class AdminRegisterView(APIView):
