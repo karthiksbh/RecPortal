@@ -104,6 +104,8 @@ class Submission(models.Model):
 
     user = models.ForeignKey(
         User, related_name='sub_student', on_delete=models.CASCADE)
+    ques_type = models.IntegerField(
+        choices=QUESTION_TYPE, default=0, verbose_name=_("Question Type"))
     question = models.ForeignKey(
         Question, related_name='dom_ques', on_delete=models.CASCADE)
     answer = models.CharField(max_length=1000)
