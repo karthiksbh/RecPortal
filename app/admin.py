@@ -73,7 +73,7 @@ class QuesTagsAdmin(admin.ModelAdmin):
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
     list_display = [
-        'user',
+        'sub_student',
         'question',
         'submitted_time',
     ]

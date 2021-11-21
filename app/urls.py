@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import AdminLoginView, AdminRegisterView, AnswerSubmissionView, RegisterView, SubResView, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView
+from .views import AdminLoginView, LongResView, AdminRegisterView, AnswerSubmissionView, RegisterView, SubResView, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView
 
 urlpatterns = [
     path('register/', RegisterView.as_view()),
@@ -15,4 +15,5 @@ urlpatterns = [
     # path('quesadd/', AddQuestionView.as_view(), name='questionadd'),
     path('adminregister/', AdminRegisterView.as_view(), name='admin_register'),
     path('adminlogin/', AdminLoginView.as_view(), name='adminlogin'),
+    path('adminlong/<str:topic>/', LongResView.as_view(), name='longres')
 ]

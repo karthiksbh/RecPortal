@@ -102,18 +102,20 @@ class Submission(models.Model):
         verbose_name_plural = _("Submissions")
         ordering = ['id']
 
-    user = models.ForeignKey(
+    sub_student = models.ForeignKey(
         User, related_name='sub_student', on_delete=models.CASCADE)
     ques_type = models.IntegerField(
         choices=QUESTION_TYPE, default=0, verbose_name=_("Question Type"))
+    domain = models.ForeignKey(
+        Domain, related_name='sub_domain', on_delete=models.CASCADE)
     question = models.ForeignKey(
-        Question, related_name='dom_ques', on_delete=models.CASCADE)
+        Question, related_name='question', on_delete=models.CASCADE)
     answer = models.CharField(max_length=1000)
     correct_option = models.CharField(max_length=1000)
     submitted_time = models.TimeField()
 
     def __str__(self):
-        return str(self.user)
+        return str(self.sub_student)
 
 
 class Results(models.Model):

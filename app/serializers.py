@@ -77,6 +77,15 @@ class QuizQuesSerializer(serializers.ModelSerializer):
         ]
 
 
+class QuesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = [
+            'ques_main',
+            'ques_type',
+        ]
+
+
 class UserDetSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -89,25 +98,20 @@ class FinalResSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Results
-        fields = ['student', 'Total', 'comments', 'submitted']
+        fields = ['student', 'Total', 'comments', 'submitted', 'domain']
 
 
 class AnsSubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
-        fields = ['user', 'question', 'answer', 'submitted_time']
+        fields = ['sub_student', 'question', 'answer', 'submitted_time']
 
 
-# class AnswerInsert(serializers.ModelSerializer):
-#     class Meta:
-#         model = Answer
-#         fields = ['answer_text', 'is_right']
+class LongAnsSerializer(serializers.ModelSerializer):
+    sub_student = UserDetSerializer(read_only=True)
+    question = QuesSerializer(read_only=True)
 
-
-# class QuesSubSerializer(serializers.ModelSerializer):
-#     answer = AnswerInsert(many=True)
-
-#     class Meta:
-#         model = Question
-#         fields = ['domain', 'ques_type',
-#                   'mark_each', 'ques_main', 'answer']
+    class Meta:
+        model = Submission
+        fields = ['sub_student',
+                  'question', 'answer', 'submitted_time']

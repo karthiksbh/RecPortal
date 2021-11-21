@@ -225,13 +225,14 @@ class AnswerSubmissionView(APIView):
     def post(self, request):
         try:
             data = request.data
-            user_id = data.get('user')
+            user_id = data.get('sub_student')
             user = User.objects.filter(id=user_id).first()
 
             ques_id = data.get('question')
             ques_of = Question.objects.filter(id=ques_id).first()
             ans_of = data.get('answer')
             sub_time = data.get('submitted_time')
+            question_type = data.get('ques_type')
 
             domain_id = data.get('domain')
             domain_id = Domain.objects.filter(id=domain_id).first()
@@ -240,40 +241,22 @@ class AnswerSubmissionView(APIView):
                 question=ques_id, is_right=True).first()
 
             if(ans == None):
-                ans = "123456789abcdef"
-
-            print("The answer submitted is: " + str(ans_of))
-            print("The correct answer is: " + str(ans))
+                ans = "mnxjdiffjdkks"
 
             stu_result = Results.objects.get(
                 Q(student=user) & Q(domain=domain_id))
-
-            print(ques_of)
 
             stu_marks = Question.objects.get(
                 Q(id=ques_id))
 
             if(str(ans_of) == str(ans)):
                 stu_result.MCQ_score += stu_marks.mark_each
+                stu_result.Total += stu_result.MCQ_score
                 stu_result.save()
-            else:
-                print("NOOO")
 
-            stu_result.Total += stu_result.MCQ_score
-            stu_result.save()
-
-            sub_data = Submission(user=user, question=ques_of, answer=ans_of,
-                                  correct_option=ans, submitted_time=sub_time)
+            sub_data = Submission(sub_student=user, question=ques_of, answer=ans_of,
+                                  correct_option=ans, submitted_time=sub_time, ques_type=question_type, domain=domain_id)
             sub_data.save()
-
-        #     serializer = AnsSubSerializer(data=request.data)
-        #     if not serializer.is_valid():
-        #         return Response({
-        #             'status': 403,
-        #             'errors': serializer.errors
-        #         })
-
-        #     serializer.save()
 
             return Response({'status': 200, 'message': 'Answer Submitted'})
 
@@ -290,3 +273,12 @@ class AnswerSubmissionView(APIView):
 #         serializer = QuizQuesSerializer(question, many=True)
 
 #         return Response(serializer.data)
+
+class LongResView(APIView):
+    def get(self, request, **kwargs):
+        res = Submission.objects.filter(
+            domain=kwargs['topic'], ques_type=1)
+        print(res)
+        serializer = LongAnsSerializer(res, many=True)
+
+        return Response(serializer.data)
