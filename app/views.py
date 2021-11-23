@@ -305,13 +305,18 @@ class MarkLongAdmin(APIView):
         try:
             data = request.data
             user = data.get('user')
-            user_id = User.objects.filter(id=user, is_admin=True).first()
+            print(user)
+            user_id = User.objects.filter(id=user).first()
 
             ques_id = data.get('question')
             ques_of = Question.objects.filter(id=ques_id).first()
 
             domain_id = data.get('domain')
             domain_id = Domain.objects.filter(id=domain_id).first()
+
+            print(user_id)
+            print(domain_id)
+            print(ques_id)
 
             sub = Submission.objects.get(
                 Q(question=ques_id) & Q(sub_student=user_id) & Q(domain=domain_id) & Q(ques_type=1))
