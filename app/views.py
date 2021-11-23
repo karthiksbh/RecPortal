@@ -11,7 +11,6 @@ from rest_framework.exceptions import AuthenticationFailed
 import jwt
 import datetime
 from django.db.models import Q
-from datetime import datetime
 
 
 class RegisterView(APIView):
