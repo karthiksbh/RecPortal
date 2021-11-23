@@ -114,4 +114,35 @@ class LongAnsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['sub_student',
-                  'question', 'answer', 'submitted_time']
+                  'question', 'answer', 'submitted_time', 'is_checked']
+
+
+class AnswerAddSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Answer
+        fields = [
+            'answer_text',
+            'is_right',
+        ]
+
+
+class QuestionAddSerializer(serializers.ModelSerializer):
+    answers = AnswerAddSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = [
+            'domain',
+            'ques_type',
+            'mark_each',
+            'ques_main',
+            'answers'
+        ]
+
+    def create(self, validated_data):
+        answers = validated_data.pop('answers')
+        question = Question.objects.create(**validated_data)
+        for answer in answers:
+            Answer.objects.create(**answer, question=question)
+        return question

@@ -113,6 +113,8 @@ class Submission(models.Model):
     answer = models.CharField(max_length=1000)
     correct_option = models.CharField(max_length=1000)
     submitted_time = models.TimeField()
+    is_checked = models.BooleanField(default=False)
+    mark_ques = models.IntegerField()
 
     def __str__(self):
         return str(self.sub_student)
