@@ -195,18 +195,21 @@ class QuizQues(APIView):
         student_exists = Results.objects.filter(
             student=user, domain=domain_id).exists()
 
+        domain_info = Domain.objects.get(Q(domain_name=domain_id))
+        time = domain_info.quiz_time
+
         if(student_exists == False):
             sub_data = Results(student=user, domain=domain_id, MCQ_score=0, Long_Ans_Score=0, Total=0,
                                submitted=False, start_time=current_time)
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time})
+            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Total Duration': time})
 
         else:
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time})
+            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Total Duration': time})
 
 
 class UserDetView(APIView):
