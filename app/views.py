@@ -1,4 +1,5 @@
-from rest_framework import response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import authentication, response
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from .models import *
@@ -11,6 +12,7 @@ from rest_framework.exceptions import AuthenticationFailed
 import jwt
 import datetime
 from django.db.models import Q
+from datetime import datetime
 
 
 class RegisterView(APIView):
@@ -102,7 +104,7 @@ class LoginView(APIView):
         email = request.data['email']
         password = request.data['password']
 
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email=email, is_admin=False).first()
 
         if user is None:
             raise AuthenticationFailed('User Not Found!')
@@ -110,24 +112,9 @@ class LoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Password is Incorrect!')
 
-        payload = {
-            'id': user.id,
-            'exp': datetime.datetime.utcnow()+datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
+        refresh = RefreshToken.for_user(user)
 
-        jwt_token = jwt.encode(payload, 'Kihtrak',
-                               algorithm='HS256')
-
-        response = Response()
-
-        response.set_cookie(key='jwt', value=jwt_token, httponly=True)
-
-        response.data = {
-            'jwt': jwt_token
-        }
-
-        return response
+        return Response({'jwt': str(refresh.access_token)})
 
 
 class AdminLoginView(APIView):
@@ -143,31 +130,18 @@ class AdminLoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Password is Incorrect!')
 
-        payload = {
-            'id': user.id,
-            'exp': datetime.datetime.utcnow()+datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
+        refresh = RefreshToken.for_user(user)
 
-        jwt_token = jwt.encode(payload, 'Kihtrak',
-                               algorithm='HS256')
-
-        response = Response()
-
-        response.set_cookie(key='jwt', value=jwt_token, httponly=True)
-
-        response.data = {
-            'jwt': jwt_token,
-            'message': "Admin Logged In",
-        }
-
-        return response
+        return Response({'jwt': str(refresh.access_token)})
 
 
 class LogoutView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         response = Response()
-        response.delete_cookie('jwt')
         response.data = {
             'Message': 'Logged Out'
         }
@@ -176,13 +150,18 @@ class LogoutView(APIView):
 
 
 class QuizQues(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         data = request.data
+        user = request.user
+        print(user.id)
         domain_id = data.get('domain')
         question = Question.objects.filter(
             domain=domain_id)
-        user_id = data.get('student')
-        user = User.objects.filter(id=user_id).first()
+        user = User.objects.filter(id=user.id).first()
 
         now = datetime.now()
 
@@ -212,19 +191,13 @@ class QuizQues(APIView):
 
 
 class UserDetView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        token = request.COOKIES.get('jwt')
-
-        if not token:
-            raise AuthenticationFailed('User Not Authenticated!')
-
-        try:
-            payload = jwt.decode(token, 'Kihtrak', algorithms=['HS256'])
-
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('User Not Authenticated!')
-
-        user = User.objects.filter(id=payload['id']).first()
+        user = request.user
+        print(user)
 
         serializer = UserDetSerializer(user)
 
@@ -232,6 +205,10 @@ class UserDetView(APIView):
 
 
 class SubResView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, **kwargs):
         res = Results.objects.filter(domain=kwargs['topic'])
         serializer = FinalResSerializer(res, many=True)
@@ -240,11 +217,16 @@ class SubResView(APIView):
 
 
 class AnswerSubmissionView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         try:
+            user = request.user
+            print(user.id)
             data = request.data
-            user_id = data.get('sub_student')
-            user = User.objects.filter(id=user_id).first()
+            user = User.objects.filter(id=user.id).first()
 
             ques_id = data.get('question')
             ques_of = Question.objects.filter(id=ques_id).first()
@@ -297,20 +279,33 @@ class AnswerSubmissionView(APIView):
 
 
 class LongResView(APIView):
-    def get(self, request, **kwargs):
-        res = Submission.objects.filter(
-            domain=kwargs['topic'], ques_type=1)
-        serializer = LongAnsSerializer(res, many=True)
 
-        return Response(serializer.data)
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        user = request.user
+        if(user.is_admin == True):
+            res = Submission.objects.filter(
+                domain=kwargs['topic'], ques_type=1)
+            serializer = LongAnsSerializer(res, many=True)
+
+            return Response(serializer.data)
+
+        else:
+            return Response({'status': 404, 'error': 'User Not Authorized'})
 
 
 class MarkLongAdmin(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         try:
             data = request.data
-            user_id = data.get('sub_student')
-            user = User.objects.filter(id=user_id).first()
+            user = data.get('user')
+            user_id = User.objects.filter(id=user, is_admin=True).first()
 
             ques_id = data.get('question')
             ques_of = Question.objects.filter(id=ques_id).first()
@@ -319,7 +314,7 @@ class MarkLongAdmin(APIView):
             domain_id = Domain.objects.filter(id=domain_id).first()
 
             sub = Submission.objects.get(
-                Q(question=ques_id) & Q(sub_student=user) & Q(domain=domain_id) & Q(ques_type=1))
+                Q(question=ques_id) & Q(sub_student=user_id) & Q(domain=domain_id) & Q(ques_type=1))
 
             print(sub)
 
@@ -333,6 +328,9 @@ class MarkLongAdmin(APIView):
             result_sub.Total = result_sub.Total - initial_mark
 
             mark_each = data.get('marks')
+            comment = data.get('comments')
+
+            result_sub.comments = comment
             sub.mark_ques = mark_each
             sub.is_checked = True
             result_sub.Long_Ans_Score += mark_each
@@ -343,11 +341,15 @@ class MarkLongAdmin(APIView):
             return Response({'status': 200, 'message': 'Long Answer Mark Updated'})
 
         except Exception as e:
-
+            print(e)
             return Response({'status': 404, 'error': 'Error'})
 
 
 class QuestionAddView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         try:
             serializer = QuestionAddSerializer(data=request.data)
