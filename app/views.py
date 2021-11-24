@@ -182,12 +182,15 @@ class QuizQues(APIView):
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Total Duration': time})
+            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Now': current_time, 'Total Duration': time})
 
         else:
+            student_exists = Results.objects.get(
+                student=user, domain=domain_id)
+            starttime = student_exists.start_time
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Total Duration': time})
+            return Response({'status': 200, 'data': serializer.data, 'Start Time': starttime, 'Now': current_time, 'Total Duration': time})
 
 
 class UserDetView(APIView):
@@ -230,7 +233,7 @@ class AnswerSubmissionView(APIView):
 
             ques_id = data.get('question')
             ques_of = Question.objects.filter(id=ques_id).first()
-            ans_of = data.get('answer')
+            ans_of = data.get('option')
 
             now = datetime.now()
 
@@ -314,10 +317,6 @@ class MarkLongAdmin(APIView):
             domain_id = data.get('domain')
             domain_id = Domain.objects.filter(id=domain_id).first()
 
-            print(user_id)
-            print(domain_id)
-            print(ques_id)
-
             sub = Submission.objects.get(
                 Q(question=ques_id) & Q(sub_student=user_id) & Q(domain=domain_id) & Q(ques_type=1))
 
@@ -369,5 +368,5 @@ class QuestionAddView(APIView):
             return Response({'status': 200, 'message': 'Question Added'})
 
         except Exception as e:
-
+            print(e)
             return Response({'status': 404, 'error': 'Error'})

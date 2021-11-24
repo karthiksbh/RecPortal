@@ -66,12 +66,12 @@ class Answer(models.Model):
         ordering = ['id']
 
     question = models.ForeignKey(
-        Question, related_name='answer', on_delete=models.CASCADE)
-    answer_text = models.CharField(max_length=255, verbose_name=_("Answer"))
+        Question, related_name='options', on_delete=models.CASCADE)
+    option = models.CharField(max_length=255, verbose_name=_("Answer"))
     is_right = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.answer_text)
+        return str(self.option)
 
 
 QUESTION_TAGS = (

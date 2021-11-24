@@ -25,7 +25,7 @@ class DomAdmin(admin.ModelAdmin):
 class AnswerInlineModel(admin.TabularInline):
     model = models.Answer
     fields = [
-        'answer_text',
+        'option',
         'is_right'
     ]
 
@@ -56,7 +56,7 @@ class QuestionAdmin(admin.ModelAdmin):
 class AnswerAdmin(admin.ModelAdmin):
     list_display = [
         'id',
-        'answer_text',
+        'option',
         'is_right',
         'question',
     ]

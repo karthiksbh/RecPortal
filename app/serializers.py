@@ -58,12 +58,12 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = [
-            'answer_text',
+            'option',
         ]
 
 
 class QuizQuesSerializer(serializers.ModelSerializer):
-    answer = AnswerSerializer(many=True, read_only=True)
+    options = AnswerSerializer(many=True, read_only=True)
     quiz = QuizSerializer(read_only=True)
 
     class Meta:
@@ -73,7 +73,7 @@ class QuizQuesSerializer(serializers.ModelSerializer):
             'quiz',
             'ques_main',
             'ques_type',
-            'answer',
+            'options',
         ]
 
 
@@ -122,13 +122,13 @@ class AnswerAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = [
-            'answer_text',
+            'option',
             'is_right',
         ]
 
 
 class QuestionAddSerializer(serializers.ModelSerializer):
-    answers = AnswerAddSerializer(many=True)
+    options = AnswerAddSerializer(many=True)
 
     class Meta:
         model = Question
@@ -137,11 +137,11 @@ class QuestionAddSerializer(serializers.ModelSerializer):
             'ques_type',
             'mark_each',
             'ques_main',
-            'answers'
+            'options'
         ]
 
     def create(self, validated_data):
-        answers = validated_data.pop('answers')
+        answers = validated_data.pop('options')
         question = Question.objects.create(**validated_data)
         for answer in answers:
             Answer.objects.create(**answer, question=question)
