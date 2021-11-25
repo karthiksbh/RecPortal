@@ -182,7 +182,7 @@ class QuizQues(APIView):
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Now': current_time, 'Total Duration': time})
+            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Total Duration': time})
 
         else:
             student_exists = Results.objects.get(
@@ -190,7 +190,7 @@ class QuizQues(APIView):
             starttime = student_exists.start_time
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': starttime, 'Now': current_time, 'Total Duration': time})
+            return Response({'status': 200, 'data': serializer.data, 'Start Time': starttime, 'Total Duration': time})
 
 
 class UserDetView(APIView):
@@ -291,6 +291,7 @@ class LongResView(APIView):
         if(user.is_admin == True):
             res = Submission.objects.filter(
                 domain=kwargs['topic'], ques_type=1)
+            print(res)
             serializer = LongAnsSerializer(res, many=True)
 
             return Response(serializer.data)
@@ -332,9 +333,7 @@ class MarkLongAdmin(APIView):
             result_sub.Total = result_sub.Total - initial_mark
 
             mark_each = data.get('marks')
-            comment = data.get('comments')
 
-            result_sub.comments = comment
             sub.mark_ques = mark_each
             sub.is_checked = True
             result_sub.Long_Ans_Score += mark_each
@@ -370,3 +369,46 @@ class QuestionAddView(APIView):
         except Exception as e:
             print(e)
             return Response({'status': 404, 'error': 'Error'})
+
+
+class TestSubmitted(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            data = request.data
+            user = request.user
+            print(user)
+            domain_id = data.get('domain')
+
+            result_sub = Results.objects.get(
+                Q(student=user) & Q(domain=domain_id))
+
+            result_sub.submitted = True
+
+            result_sub.save()
+
+            return Response({'status': 200, 'message': 'Test Has Been Submitted'})
+
+        except Exception as e:
+            print(e)
+            return Response({'status': 404, 'error': 'Error'})
+
+
+class QuesAnsAdminView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        user = request.user
+        if(user.is_admin == True):
+            question = Question.objects.filter(
+                domain=kwargs['topic'])
+            print(question)
+            serializer = QuizQuesSerializer(question, many=True)
+
+            return Response({'status': 200, 'data': serializer.data})
+
+        else:
+            return Response({'status': 404, 'error': 'User Not Authorized'})
