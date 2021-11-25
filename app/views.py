@@ -290,7 +290,7 @@ class LongResView(APIView):
         user = request.user
         if(user.is_admin == True):
             res = Submission.objects.filter(
-                domain=kwargs['topic'], ques_type=1)
+                domain=kwargs['topic'], sub_student=kwargs['student'], ques_type=1)
             print(res)
             serializer = LongAnsSerializer(res, many=True)
 
@@ -379,7 +379,7 @@ class TestSubmitted(APIView):
         try:
             data = request.data
             user = request.user
-            print(user)
+
             domain_id = data.get('domain')
 
             result_sub = Results.objects.get(
@@ -405,10 +405,40 @@ class QuesAnsAdminView(APIView):
         if(user.is_admin == True):
             question = Question.objects.filter(
                 domain=kwargs['topic'])
-            print(question)
+
             serializer = QuizQuesSerializer(question, many=True)
 
             return Response({'status': 200, 'data': serializer.data})
 
         else:
             return Response({'status': 404, 'error': 'User Not Authorized'})
+
+
+class CommentAdminView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = request.user
+            data = request.data
+            if(user.is_admin == True):
+                user_id = data.get('user')
+                domain_id = data.get('domain')
+                comment = data.get('comments')
+
+                result_sub = Results.objects.get(
+                    Q(student=user_id) & Q(domain=domain_id))
+
+                result_sub.comments = comment
+
+                result_sub.save()
+
+                return Response({'status': 200, 'message': 'Comments added'})
+
+            else:
+                return Response({'status': 404, 'error': 'User Not Authorized'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 404, 'error': 'Error'})
