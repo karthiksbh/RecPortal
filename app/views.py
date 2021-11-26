@@ -290,7 +290,7 @@ class LongResView(APIView):
         user = request.user
         if(user.is_admin == True):
             res = Submission.objects.filter(
-                domain=kwargs['topic'], sub_student=kwargs['student'], ques_type=1)
+                domain=kwargs['topic'], sub_student=kwargs['student'])
             print(res)
             serializer = LongAnsSerializer(res, many=True)
 
