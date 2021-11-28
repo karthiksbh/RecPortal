@@ -75,8 +75,27 @@ class Answer(models.Model):
 
 
 QUESTION_TAGS = (
-    (_('DOMAIN'), _('DOMAIN')),
-    (_('ENGLISH'), _('ENGLISH')),
+    (_('Microcontroller and Microprocessors'),
+     _('Microcontroller and Microprocessors')),
+    (_('Digital logic design'), _('Digital logic design')),
+    (_('Sensors'), _('Sensors')),
+    (_('Basic electronics'), _('Basic electronics')),
+    (_('IoT'), _('IoT')),
+    (_('Python'), _('Python')),
+    (_('DSA - Trees mostly'), _('DSA - Trees mostly')),
+    (_('Competitive Coding'), _('Competitive Coding')),
+    (_('CAO - basic computer knowledge stuff'),
+     _('CAO - basic computer knowledge stuff')),
+    (_('Logical reasoning '), _('Logical reasoning')),
+    (_('Exposure triangle'), _('Composition')),
+    (_('Framing'), _('Framing')),
+    (_('Editing'), _('Editing')),
+    (_('Software'), _('Software')),
+    (_('Hardware'), _('Hardware')),
+    (_('UI/UX'), _('UI/UX')),
+    (_('Vectors'), _('Vectors')),
+    (_('Colour Palette'), _('Colour Palette')),
+
 )
 
 

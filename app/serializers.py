@@ -69,7 +69,6 @@ class QuizQuesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
-            'id',
             'quiz',
             'ques_main',
             'ques_type',
@@ -98,7 +97,8 @@ class FinalResSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Results
-        fields = ['student', 'Total', 'comments', 'submitted', 'domain']
+        fields = ['student', 'MCQ_score', 'Long_Ans_Score',
+                  'Total', 'comments', 'submitted', 'domain']
 
 
 class AnsSubSerializer(serializers.ModelSerializer):
@@ -113,7 +113,7 @@ class LongAnsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ['sub_student',
+        fields = ['sub_student', 'id',
                   'question', 'answer', 'submitted_time', 'is_checked']
 
 
@@ -122,6 +122,7 @@ class AnswerAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = [
+            'id',
             'option',
             'is_right',
         ]
@@ -129,20 +130,27 @@ class AnswerAddSerializer(serializers.ModelSerializer):
 
 class QuestionAddSerializer(serializers.ModelSerializer):
     options = AnswerAddSerializer(many=True)
+    tag = TagSerializer(many=True)
 
     class Meta:
         model = Question
         fields = [
+            'id',
             'domain',
             'ques_type',
             'mark_each',
             'ques_main',
-            'options'
+            'options',
+            'tag'
         ]
 
     def create(self, validated_data):
         answers = validated_data.pop('options')
+        new_tag = validated_data.pop('tag')
         question = Question.objects.create(**validated_data)
         for answer in answers:
             Answer.objects.create(**answer, question=question)
+        for temp in new_tag:
+            QuestionsTags.objects.create(**temp, question=question)
+
         return question

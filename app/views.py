@@ -18,12 +18,15 @@ from datetime import datetime
 class RegisterView(APIView):
     def post(self, request):
         try:
+            # if('email' not in request.data.keys()):
+            #     return Response({'status':404})
             email = request.data['email']
             if(email.find('@vitstudent.ac.in') == -1):
                 return Response({'status': 404, 'message': 'Please Enter Your VIT Email ID'})
             else:
                 serializer = UserSerializer(data=request.data)
                 if not serializer.is_valid():
+                    print(serializer.errors)
                     return Response({
                         'status': 403,
                         'errors': serializer.errors
@@ -34,6 +37,7 @@ class RegisterView(APIView):
                 return Response({'status': 200, 'message': 'OTP sent to your mail'})
 
         except Exception as e:
+            print(e)
 
             return Response({'status': 404, 'error': serializer.errors})
 
@@ -47,6 +51,7 @@ class AdminRegisterView(APIView):
             else:
                 serializer = AdminSerializer(data=request.data)
                 if not serializer.is_valid():
+                    print(serializer.errors)
                     return Response({
                         'status': 403,
                         'errors': serializer.errors
@@ -364,7 +369,7 @@ class QuestionAddView(APIView):
 
             serializer.save()
 
-            return Response({'status': 200, 'message': 'Question Added'})
+            return Response({'status': 200, 'data': serializer.data})
 
         except Exception as e:
             print(e)
