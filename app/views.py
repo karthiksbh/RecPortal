@@ -51,7 +51,6 @@ class AdminRegisterView(APIView):
             else:
                 serializer = AdminSerializer(data=request.data)
                 if not serializer.is_valid():
-                    print(serializer.errors)
                     return Response({
                         'status': 403,
                         'errors': serializer.errors
@@ -106,6 +105,8 @@ class VerifyOTP(APIView):
 
 class LoginView(APIView):
     def post(self, request):
+        user_exists=False
+        
         email = request.data['email']
         password = request.data['password']
 

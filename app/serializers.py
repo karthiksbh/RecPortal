@@ -69,6 +69,7 @@ class QuizQuesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
+            'id',
             'quiz',
             'ques_main',
             'ques_type',
