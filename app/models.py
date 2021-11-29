@@ -95,7 +95,19 @@ QUESTION_TAGS = (
     (_('UI/UX'), _('UI/UX')),
     (_('Vectors'), _('Vectors')),
     (_('Colour Palette'), _('Colour Palette')),
-
+    (_('Figma'), _('Figma')),
+    (_('Typography'), _('Typography')),
+    (_('Teamwork'), _('Teamwork')),
+    (_('Radical thinking'), _('Radical thinking')),
+    (_('Convincing skills'), _('Convincing skills')),
+    (_('Assertiveness'), _('Assertiveness')),
+    (_('Communication skills'), _('Communication skills')),
+    (_('Decisiveness'), _('Decisiveness')),
+    (_('Empathy'), _('Empathy')),
+    (_('Honesty/Trust'), _('Honesty/Trust')),
+    (_('Vision and Communicating'), _('Vision and Communicating')),
+    (_('Autonomous and Responsible'), _('Autonomous and Responsible')),
+    (_('How to Be in Command'), _('How to Be in Command')),
 )
 
 
