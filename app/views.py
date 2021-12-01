@@ -105,8 +105,8 @@ class VerifyOTP(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        user_exists=False
-        
+        user_exists = False
+
         email = request.data['email']
         password = request.data['password']
 
@@ -314,8 +314,8 @@ class MarkLongAdmin(APIView):
     def post(self, request):
         try:
             data = request.data
-            user = data.get('user')
-            print(user)
+            user = request.user
+            print(user.id)
             user_id = User.objects.filter(id=user).first()
 
             ques_id = data.get('question')
