@@ -81,6 +81,7 @@ class QuesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
+            'id',
             'ques_main',
             'ques_type',
         ]
@@ -114,7 +115,7 @@ class LongAnsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ['sub_student', 'id',
+        fields = ['sub_student',
                   'question', 'answer', 'submitted_time', 'is_checked']
 
 
