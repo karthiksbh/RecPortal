@@ -314,8 +314,8 @@ class MarkLongAdmin(APIView):
     def post(self, request):
         try:
             data = request.data
-            user = request.user
-            print(user.id)
+            user = data.get('user')
+            print(user)
             user_id = User.objects.filter(id=user).first()
 
             ques_id = data.get('question')
