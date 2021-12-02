@@ -1,6 +1,7 @@
 import random
 from django.core.cache import cache
 import smtplib
+from email.message import EmailMessage
 
 
 def send_otp_to_email(mail, user_obj):
@@ -11,25 +12,25 @@ def send_otp_to_email(mail, user_obj):
         otp_to_send = random.randint(100000, 999999)
         cache.set(mail, otp_to_send, timeout=60)
         user_obj.otp = otp_to_send
-        print(user_obj.email)
-        sender_email = "karthiksbh1@gmail.com"
-        rec_email = "karthiksbh1@gmail.com"
+        rec_email = user_obj.email
+        sender_email = "iete.vit2021@gmail.com"
 
         otp = str(user_obj.otp)
 
-        # message_type = "OTP is: " + str(user_obj.otp)
-        # message_type = str(message_type)
+        msg = EmailMessage()
+        message = "Dear Student, Please use the following OTP " + \
+            str(otp) + " to complete the email verification"
+        msg.set_content(message)
 
-        message = f"""\n
+        msg['Subject'] = 'One Time Password(OTP) Confirmation'
+        msg['From'] = sender_email
+        msg['To'] = rec_email
 
-            OTP is: {otp}."""
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, "Velk@1205")
+        server.send_message(msg)
+        server.quit()
 
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, "dummy@1234")
-
-        server.sendmail(sender_email, rec_email, message)
-        print("OTP is: " + str(user_obj.otp))
         user_obj.save()
         return True, 0
 
