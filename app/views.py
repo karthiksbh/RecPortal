@@ -188,7 +188,7 @@ class QuizQues(APIView):
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': current_time, 'Total Duration': time})
+            return Response({'status': 200, 'data': serializer.data, 'starttime': current_time, 'totalduration': time})
 
         else:
             student_exists = Results.objects.get(
@@ -196,7 +196,7 @@ class QuizQues(APIView):
             starttime = student_exists.start_time
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'Start Time': starttime, 'Total Duration': time})
+            return Response({'status': 200, 'data': serializer.data, 'starttime': starttime, 'totalduration': time})
 
 
 class UserDetView(APIView):
