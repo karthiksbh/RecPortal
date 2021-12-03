@@ -261,25 +261,65 @@ class AnswerSubmissionView(APIView):
             stu_marks = Question.objects.get(
                 Q(id=ques_id))
 
-            if(str(ans_of) == str(ans)):
-                marks_each = stu_marks.mark_each
-                stu_result.MCQ_score += stu_marks.mark_each
-                stu_result.Total += stu_result.MCQ_score
-                stu_result.save()
+            student_submitted = False
+            student_submitted = Submission.objects.filter(
+                sub_student=user, domain=domain_id, question=ques_of).exists()
+
+            if(student_submitted == False):
+
+                if(str(ans_of) == str(ans)):
+                    marks_each = stu_marks.mark_each
+                    stu_result.MCQ_score += marks_each
+                    stu_result.Total += marks_each
+                    stu_result.save()
+                else:
+                    marks_each = 0
+
+                if(question_type == 0):
+                    sub_data = Submission(sub_student=user, question=ques_of, answer=ans_of,
+                                          correct_option=ans, submitted_time=current_time, ques_type=question_type, domain=domain_id, is_checked=True, mark_ques=marks_each)
+                    sub_data.save()
+
+                else:
+                    sub_data = Submission(sub_student=user, question=ques_of, answer=ans_of,
+                                          correct_option=ans, submitted_time=current_time, ques_type=question_type, domain=domain_id, is_checked=False, mark_ques=0)
+                    sub_data.save()
+
+                return Response({'status': 200, 'message': 'Answer Submitted'})
+
             else:
-                marks_each = 0
+                if(question_type == 0):
+                    marks_before = Submission.objects.get(
+                        sub_student=user, domain=domain_id, question=ques_of)
+                    stu_result.MCQ_score = stu_result.MCQ_score - marks_before.mark_ques
+                    stu_result.Total = stu_result.Total - marks_before.mark_ques
+                    stu_result.save()
 
-            if(question_type == 0):
-                sub_data = Submission(sub_student=user, question=ques_of, answer=ans_of,
-                                      correct_option=ans, submitted_time=current_time, ques_type=question_type, domain=domain_id, is_checked=True, mark_ques=marks_each)
-                sub_data.save()
+                    if(str(ans_of) == str(ans)):
+                        marks_each = stu_marks.mark_each
+                        stu_result.MCQ_score += stu_marks.mark_each
+                        stu_result.Total += stu_result.MCQ_score
+                        stu_result.save()
+                    else:
+                        marks_each = 0
 
-            else:
-                sub_data = Submission(sub_student=user, question=ques_of, answer=ans_of,
-                                      correct_option=ans, submitted_time=current_time, ques_type=question_type, domain=domain_id, is_checked=False, mark_ques=0)
-                sub_data.save()
+                    marks_before.mark_ques = marks_each
+                    marks_before.save()
 
-            return Response({'status': 200, 'message': 'Answer Submitted'})
+                    student_ans = Submission.objects.get(
+                        sub_student=user, domain=domain_id, question=ques_of)
+
+                    student_ans.answer = ans_of
+                    student_ans.save()
+
+                else:
+                    student_ans = Submission.objects.get(
+                        sub_student=user, domain=domain_id, question=ques_of)
+
+                    student_ans.answer = ans_of
+                    student_ans.save()
+
+                return Response({'status': 200, 'message': 'Answer Submitted'})
 
         except Exception as e:
             print(e)
@@ -392,7 +432,6 @@ class TestSubmitted(APIView):
                 Q(student=user) & Q(domain=domain_id))
 
             result_sub.submitted = True
-
             result_sub.save()
 
             return Response({'status': 200, 'message': 'Test Has Been Submitted'})
