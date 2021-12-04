@@ -78,12 +78,15 @@ class QuizQuesSerializer(serializers.ModelSerializer):
 
 
 class QuesSerializer(serializers.ModelSerializer):
+    tag = TagSerializer(read_only=True, many=True)
+
     class Meta:
         model = Question
         fields = [
             'id',
             'ques_main',
             'ques_type',
+            'tag',
         ]
 
 
