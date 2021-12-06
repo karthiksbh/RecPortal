@@ -13,23 +13,22 @@ import jwt
 import datetime
 from django.db.models import Q
 from datetime import datetime
+from datetime import date
+my_date = date(2021, 3, 2)
 
 
 class RegisterView(APIView):
     def post(self, request):
         try:
-            # if('email' not in request.data.keys()):
-            #     return Response({'status':404})
             email = request.data['email']
             if(email.find('@vitstudent.ac.in') == -1):
                 return Response({'status': 404, 'message': 'Please Enter Your VIT Email ID'})
             else:
                 serializer = UserSerializer(data=request.data)
                 if not serializer.is_valid():
-                    print(serializer.errors)
                     return Response({
                         'status': 403,
-                        'errors': serializer.errors
+                        'errors': 'Email or Registration Number Already Exists'
                     })
 
                 serializer.save()
@@ -39,7 +38,7 @@ class RegisterView(APIView):
         except Exception as e:
             print(e)
 
-            return Response({'status': 404, 'error': serializer.errors})
+            return Response({'status': 404, 'error': 'Error'})
 
 
 class AdminRegisterView(APIView):
@@ -155,6 +154,10 @@ class LogoutView(APIView):
         return response
 
 
+def days_hours_minutes(td):
+    return td.days, td.seconds//3600, (td.seconds//60) % 60
+
+
 class QuizQues(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -163,13 +166,12 @@ class QuizQues(APIView):
     def post(self, request):
         data = request.data
         user = request.user
-        print(user.id)
         domain_id = data.get('domain')
         question = Question.objects.filter(
             domain=domain_id)
         user = User.objects.filter(id=user.id).first()
 
-        now = datetime.now()
+        now = datetime.now().time()
 
         current_time = now.strftime("%H:%M:%S")
 
@@ -191,12 +193,30 @@ class QuizQues(APIView):
             return Response({'status': 200, 'data': serializer.data, 'starttime': current_time, 'totalduration': time})
 
         else:
+
             student_exists = Results.objects.get(
                 student=user, domain=domain_id)
-            starttime = student_exists.start_time
-            serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'starttime': starttime, 'totalduration': time})
+            if(student_exists.submitted == True):
+                return Response({'status': 200, 'message': 'Test Submitted'})
+            else:
+                starttime = student_exists.start_time
+                serializer = QuizQuesSerializer(question, many=True)
+
+                datetime1 = datetime.combine(my_date, starttime)
+                datetime2 = datetime.combine(my_date, now)
+                time_elapsed = datetime2 - datetime1
+                rem_time = days_hours_minutes(time_elapsed)
+
+                hours = rem_time[1]
+                minutes = rem_time[2]
+
+                if(hours >= 1 or minutes > time):
+                    student_exists.submitted = True
+                    student_exists.save()
+                    return Response({'status': 200, 'message': 'Test Submitted'})
+                else:
+                    return Response({'status': 200, 'data': serializer.data, 'starttime': starttime, 'totalduration': time})
 
 
 class UserDetView(APIView):
