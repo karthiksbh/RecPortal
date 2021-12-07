@@ -166,6 +166,7 @@ class Results(models.Model):
     comments = models.TextField(max_length=1000)
     submitted = models.BooleanField(default=False)
     start_time = models.TimeField()
+    discrepancies = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.student)
