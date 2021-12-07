@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import AdminLoginView, CommentAdminView, MarkLongAdmin, QuesAnsAdminView, QuestionAddView, LongResView, AdminRegisterView, AnswerSubmissionView, MarkLongAdmin, RegisterView, SubResView, TestSubmitted, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView
+from .views import AdminLoginView, CommentAdminView, IncDis, MarkLongAdmin, QuesAnsAdminView, QuestionAddView, LongResView, AdminRegisterView, AnswerSubmissionView, MarkLongAdmin, RegisterView, SubResView, TestSubmitted, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView
 
 urlpatterns = [
     path('register/', RegisterView.as_view()),
@@ -21,4 +21,5 @@ urlpatterns = [
     path('quesansadmin/<str:topic>/',
          QuesAnsAdminView.as_view(), name='quesansadmin'),
     path('addcommentsadmin/', CommentAdminView.as_view(), name='admincomment'),
+    path('incdes/', IncDis.as_view(), name='incdes'),
 ]

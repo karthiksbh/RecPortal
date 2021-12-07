@@ -507,3 +507,36 @@ class CommentAdminView(APIView):
         except Exception as e:
             print(e)
             return Response({'status': 404, 'error': 'Error'})
+
+
+class IncDis(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            data = request.data
+            user = request.user
+
+            domain_id = data.get('domain')
+
+            result_sub = Results.objects.get(
+                Q(student=user) & Q(domain=domain_id))
+
+            result_sub.discrepancies += 1
+            result_sub.save()
+
+            remaining = 5 - result_sub.discrepancies
+
+            if(remaining == 0):
+                result_sub.submitted = True
+                result_sub.save()
+
+                return Response({'status': 200, 'message': 'Test Has Been Submitted'})
+
+            else:
+                return Response({'status': 200, 'Discrepancies Remaining': remaining})
+
+        except Exception as e:
+            print(e)
+            return Response({'status': 404, 'error': 'Error'})
