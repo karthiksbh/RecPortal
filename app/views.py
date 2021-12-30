@@ -77,7 +77,17 @@ class VerifyOTP(APIView):
 
 
 # Generate OTP
-# class generate_OTP(APIView):
+class Generate_OTP(APIView):
+    def get(self, request):
+        try:
+            user = request.user
+            send_otp_to_email(user.email, user)
+
+            return Response({'message': 'OTP Sent to the Mail'}, status=200)
+
+        except Exception as e:
+            print(e)
+        return Response({'error': 'Something Went Wrong'}, status=404)
 
 
 # User Login
@@ -430,16 +440,22 @@ class MarkLongAdmin(APIView):
             result_sub.Long_Ans_Score = result_sub.Long_Ans_Score - initial_mark
             result_sub.Total = result_sub.Total - initial_mark
 
-            mark_each = data.get('marks')
+            mark_ofques = data.get('marks')
 
-            sub.mark_ques = mark_each
-            sub.is_checked = True
-            result_sub.Long_Ans_Score += mark_each
-            result_sub.Total += mark_each
-            sub.save()
-            result_sub.save()
+            print(ques_of.mark_each)
 
-            return Response({'message': 'Long Answer Mark Updated'}, status=200)
+            if(mark_ofques > ques_of.mark_each):
+                return Response({'error': 'Cannot award more than the maximum marks'}, status=403)
+
+            else:
+                sub.mark_ques = mark_ofques
+                sub.is_checked = True
+                result_sub.Long_Ans_Score += mark_ofques
+                result_sub.Total += mark_ofques
+                sub.save()
+                result_sub.save()
+
+                return Response({'message': 'Long Answer Mark Updated'}, status=200)
 
         except Exception as e:
             print(e)
@@ -497,6 +513,7 @@ class CommentAdminView(APIView):
             return Response({'error': 'Something Went Wrong'}, status=404)
 
 
+# To make the result of student as checked (all answers checked)
 class Student_check(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
