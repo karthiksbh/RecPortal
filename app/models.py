@@ -167,6 +167,7 @@ class Results(models.Model):
     submitted = models.BooleanField(default=False)
     start_time = models.TimeField()
     discrepancies = models.IntegerField(default=0)
+    result_checked = models.BooleanField(default=0)
 
     def __str__(self):
         return str(self.student)

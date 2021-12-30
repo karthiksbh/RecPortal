@@ -18,6 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
                                    email=validated_data['email'], phone=validated_data['phone'])
         user.set_password(validated_data['password'])
         user.save()
+        print(user)
+        print(user.email)
         send_otp_to_email(user.email, user)
         return user
 
@@ -85,6 +87,7 @@ class QuesSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'ques_main',
+            'mark_each',
             'ques_type',
             'tag',
         ]
@@ -119,43 +122,4 @@ class LongAnsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['sub_student',
-                  'question', 'answer', 'submitted_time', 'is_checked']
-
-
-class AnswerAddSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Answer
-        fields = [
-            'id',
-            'option',
-            'is_right',
-        ]
-
-
-class QuestionAddSerializer(serializers.ModelSerializer):
-    options = AnswerAddSerializer(many=True)
-    tag = TagSerializer(many=True)
-
-    class Meta:
-        model = Question
-        fields = [
-            'id',
-            'domain',
-            'ques_type',
-            'mark_each',
-            'ques_main',
-            'options',
-            'tag'
-        ]
-
-    def create(self, validated_data):
-        answers = validated_data.pop('options')
-        new_tag = validated_data.pop('tag')
-        question = Question.objects.create(**validated_data)
-        for answer in answers:
-            Answer.objects.create(**answer, question=question)
-        for temp in new_tag:
-            QuestionsTags.objects.create(**temp, question=question)
-
-        return question
+                  'question', 'answer', 'submitted_time', 'is_checked', 'mark_ques']

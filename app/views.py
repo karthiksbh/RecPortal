@@ -17,54 +17,46 @@ from datetime import date
 my_date = date(2021, 3, 2)
 
 
+# User Registration
 class RegisterView(APIView):
     def post(self, request):
         try:
             email = request.data['email']
             if(email.find('@vitstudent.ac.in') == -1):
-                return Response({'status': 404, 'message': 'Please Enter Your VIT Email ID'})
+                return Response({'message': 'Please Enter Your VIT Email ID'}, status=404)
             else:
                 serializer = UserSerializer(data=request.data)
                 if not serializer.is_valid():
-                    return Response({
-                        'status': 403,
-                        'errors': 'Email or Registration Number Already Exists'
-                    })
-
+                    return Response({'errors': 'Email or Registration Number Already Exists'}, status=403)
                 serializer.save()
 
-                return Response({'status': 200, 'message': 'OTP sent to your mail'})
+                return Response({'message': 'OTP sent to your mail'}, status=200)
 
         except Exception as e:
             print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
 
-            return Response({'status': 404, 'error': 'Error'})
 
-
+# Admin Registration
 class AdminRegisterView(APIView):
     def post(self, request):
         try:
             email = request.data['email']
             if(email.find('@vitstudent.ac.in') == -1):
-                return Response({'status': 404, 'message': 'Please Enter Your VIT Email ID'})
+                return Response({'message': 'Please Enter Your VIT Email ID'}, status=404)
             else:
                 serializer = AdminSerializer(data=request.data)
                 if not serializer.is_valid():
-                    return Response({
-                        'status': 403,
-                        'errors': serializer.errors
-                    })
-
+                    return Response({'errors': serializer.errors}, status=403)
                 serializer.save()
-
-                return Response({'status': 200, 'message': 'Admin Registered'})
+                return Response({'message': 'Admin Registered'}, status=200)
 
         except Exception as e:
             print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
 
-            return Response({'status': 404, 'error': 'Error'})
 
-
+# OTP Verification
 class VerifyOTP(APIView):
     def post(self, request):
         try:
@@ -75,40 +67,25 @@ class VerifyOTP(APIView):
             if user_obj.otp == otp:
                 user_obj.is_email_verified = True
                 user_obj.save()
-                return Response({'status': 200, 'message': 'Email verified'})
+                return Response({'message': 'Email verified'}, status=200)
 
-            return Response({'status': 403, 'message': 'OTP wrong'})
-
-        except Exception as e:
-            print(e)
-        return Response({'status': 404, 'error': 'something went wrong'})
-
-    def patch(self, request):
-        try:
-            data = request.data
-            user_obj = User.objects.filter(email=data.get('email'))
-            if not user_obj.exists():
-                return Response({'status': 200, 'message': 'No User Found'})
-
-            status, time = send_otp_to_email(data.get('email'), user_obj[0])
-            if status:
-                return Response({'status': 200, 'message': 'OTP Sent Again'})
-
-            return Response({'status': 404, 'error': f'try after {time} seconds'})
+            return Response({'message': 'Incorrect OTP'}, status=403)
 
         except Exception as e:
             print(e)
+        return Response({'error': 'Something Went Wrong'}, status=404)
 
-        return Response({'status': 404, 'error': f'try after {time} seconds'})
+
+# Generate OTP
+# class generate_OTP(APIView):
 
 
+# User Login
 class LoginView(APIView):
     def post(self, request):
         user_exists = False
-
         email = request.data['email']
         password = request.data['password']
-
         user = User.objects.filter(email=email, is_admin=False).first()
 
         if user is None:
@@ -119,9 +96,10 @@ class LoginView(APIView):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({'jwt': str(refresh.access_token)})
+        return Response({'jwt': str(refresh.access_token)}, status=200)
 
 
+# Admin Login
 class AdminLoginView(APIView):
     def post(self, request):
         email = request.data['email']
@@ -137,27 +115,37 @@ class AdminLoginView(APIView):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({'jwt': str(refresh.access_token)})
+        return Response({'jwt': str(refresh.access_token)}, status=200)
 
 
+# Log Out
 class LogoutView(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        response = Response()
-        response.data = {
-            'Message': 'Logged Out'
-        }
+        return Response({'Message': 'Logged Out'}, status=200)
 
-        return response
+
+# Logged in User Details
+class UserDetView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserDetSerializer(user)
+
+        return Response(serializer.data, status=200)
 
 
 def days_hours_minutes(td):
     return td.days, td.seconds//3600, (td.seconds//60) % 60
 
 
+# Start Quiz or Resume Quiz
 class QuizQues(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -190,7 +178,7 @@ class QuizQues(APIView):
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data, 'starttime': current_time, 'totalduration': time})
+            return Response({'data': serializer.data, 'starttime': current_time, 'totalduration': time}, status=200)
 
         else:
 
@@ -198,7 +186,7 @@ class QuizQues(APIView):
                 student=user, domain=domain_id)
 
             if(student_exists.submitted == True):
-                return Response({'status': 200, 'message': 'Test Submitted'})
+                return Response({'message': 'Test Submitted'}, status=200)
             else:
                 starttime = student_exists.start_time
                 serializer = QuizQuesSerializer(question, many=True)
@@ -214,37 +202,47 @@ class QuizQues(APIView):
                 if(hours >= 1 or minutes > time):
                     student_exists.submitted = True
                     student_exists.save()
-                    return Response({'status': 200, 'message': 'Test Submitted'})
+                    return Response({'message': 'Test Submitted'}, status=200)
                 else:
-                    return Response({'status': 200, 'data': serializer.data, 'starttime': starttime, 'totalduration': time})
+                    return Response({'data': serializer.data, 'starttime': starttime, 'totalduration': time}, status=200)
 
 
-class UserDetView(APIView):
-
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        print(user)
-
-        serializer = UserDetSerializer(user)
-
-        return Response(serializer.data)
-
-
-class SubResView(APIView):
+# Discrepencies Increase and Decrease (maximum dis = 5)
+class IncDis(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, **kwargs):
-        res = Results.objects.filter(domain=kwargs['topic'])
-        serializer = FinalResSerializer(res, many=True)
+    def post(self, request):
+        try:
+            data = request.data
+            user = request.user
 
-        return Response(serializer.data)
+            domain_id = data.get('domain')
+
+            result_sub = Results.objects.get(
+                Q(student=user) & Q(domain=domain_id))
+
+            result_sub.discrepancies += 1
+            result_sub.save()
+
+            remaining = 5 - result_sub.discrepancies
+
+            if(remaining == 0):
+                result_sub.submitted = True
+                result_sub.save()
+
+                return Response({'message': 'Test Has Been Submitted'}, status=200)
+
+            else:
+                return Response({'Discrepancies Remaining': remaining}, status=200)
+
+        except Exception as e:
+            print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
 
 
+# Submit Answer with Update
 class AnswerSubmissionView(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -253,7 +251,6 @@ class AnswerSubmissionView(APIView):
     def post(self, request):
         try:
             user = request.user
-            print(user.id)
             data = request.data
             user = User.objects.filter(id=user.id).first()
 
@@ -273,7 +270,7 @@ class AnswerSubmissionView(APIView):
                 question=ques_id, is_right=True).first()
 
             if(ans == None):
-                ans = "mnxjdiffjdkks"
+                ans = "mnxjdiffjdkksasdada"
 
             stu_result = Results.objects.get(
                 Q(student=user) & Q(domain=domain_id))
@@ -305,7 +302,7 @@ class AnswerSubmissionView(APIView):
                                           correct_option=ans, submitted_time=current_time, ques_type=question_type, domain=domain_id, is_checked=False, mark_ques=0)
                     sub_data.save()
 
-                return Response({'status': 200, 'message': 'Answer Submitted'})
+                return Response({'message': 'Answer Submitted'}, status=200)
 
             else:
                 if(question_type == 0):
@@ -339,14 +336,39 @@ class AnswerSubmissionView(APIView):
                     student_ans.answer = ans_of
                     student_ans.save()
 
-                return Response({'status': 200, 'message': 'Answer Submitted'})
+                return Response({'message': 'Answer Submitted'}, status=200)
+
+        except Exception as e:
+
+            return Response({'error': 'Something Went Wrong'}, status=404)
+
+
+# For submitting the test by the user
+class TestSubmitted(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            data = request.data
+            user = request.user
+
+            domain_id = data.get('domain')
+
+            result_sub = Results.objects.get(
+                Q(student=user) & Q(domain=domain_id))
+
+            result_sub.submitted = True
+            result_sub.save()
+
+            return Response({'message': 'Test Has Been Submitted'}, status=200)
 
         except Exception as e:
             print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
 
-            return Response({'status': 404, 'error': 'Error'})
 
-
+# Displaying Answers to the Admin of the Student
 class LongResView(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -357,15 +379,28 @@ class LongResView(APIView):
         if(user.is_admin == True):
             res = Submission.objects.filter(
                 domain=kwargs['topic'], sub_student=kwargs['student'])
-            print(res)
             serializer = LongAnsSerializer(res, many=True)
 
-            return Response(serializer.data)
+            return Response(serializer.data, status=200)
 
         else:
-            return Response({'status': 404, 'error': 'User Not Authorized'})
+            return Response({'error': 'User Not Authorized'}, status=404)
 
 
+# Results for a particular domain (Admin)
+class SubResView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        res = Results.objects.filter(domain=kwargs['topic'])
+        serializer = FinalResSerializer(res, many=True)
+
+        return Response(serializer.data, status=200)
+
+
+# Long Answer Marks Updation by Admin
 class MarkLongAdmin(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -387,13 +422,10 @@ class MarkLongAdmin(APIView):
             sub = Submission.objects.get(
                 Q(question=ques_id) & Q(sub_student=user_id) & Q(domain=domain_id) & Q(ques_type=1))
 
-            print(sub)
-
             initial_mark = sub.mark_ques
 
             result_sub = Results.objects.get(
                 Q(student=user) & Q(domain=domain_id))
-            print(result_sub)
 
             result_sub.Long_Ans_Score = result_sub.Long_Ans_Score - initial_mark
             result_sub.Total = result_sub.Total - initial_mark
@@ -407,61 +439,16 @@ class MarkLongAdmin(APIView):
             sub.save()
             result_sub.save()
 
-            return Response({'status': 200, 'message': 'Long Answer Mark Updated'})
+            return Response({'message': 'Long Answer Mark Updated'}, status=200)
 
         except Exception as e:
             print(e)
-            return Response({'status': 404, 'error': 'Error'})
+            return Response({'error': 'Something Went Wrong'}, status=404)
 
 
-class QuestionAddView(APIView):
-
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        try:
-            serializer = QuestionAddSerializer(data=request.data)
-            if not serializer.is_valid():
-                return Response({
-                    'status': 403,
-                    'errors': serializer.errors
-                })
-
-            serializer.save()
-
-            return Response({'status': 200, 'data': serializer.data})
-
-        except Exception as e:
-            print(e)
-            return Response({'status': 404, 'error': 'Error'})
-
-
-class TestSubmitted(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        try:
-            data = request.data
-            user = request.user
-
-            domain_id = data.get('domain')
-
-            result_sub = Results.objects.get(
-                Q(student=user) & Q(domain=domain_id))
-
-            result_sub.submitted = True
-            result_sub.save()
-
-            return Response({'status': 200, 'message': 'Test Has Been Submitted'})
-
-        except Exception as e:
-            print(e)
-            return Response({'status': 404, 'error': 'Error'})
-
-
+# Displaying Questions of one particular domain
 class QuesAnsAdminView(APIView):
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -473,12 +460,13 @@ class QuesAnsAdminView(APIView):
 
             serializer = QuizQuesSerializer(question, many=True)
 
-            return Response({'status': 200, 'data': serializer.data})
+            return Response({'data': serializer.data}, status=200)
 
         else:
-            return Response({'status': 404, 'error': 'User Not Authorized'})
+            return Response({'error': 'User Not Authorized'}, status=404)
 
 
+# Add comments to the student by the admin
 class CommentAdminView(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -500,43 +488,38 @@ class CommentAdminView(APIView):
 
                 result_sub.save()
 
-                return Response({'status': 200, 'message': 'Comments added'})
+                return Response({'message': 'Comments added'}, status=200)
 
             else:
-                return Response({'status': 404, 'error': 'User Not Authorized'})
+                return Response({'error': 'User Not Authorized'}, status=404)
         except Exception as e:
             print(e)
-            return Response({'status': 404, 'error': 'Error'})
+            return Response({'error': 'Something Went Wrong'}, status=404)
 
 
-class IncDis(APIView):
+class Student_check(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
-            data = request.data
             user = request.user
+            data = request.data
+            if(user.is_admin == True):
+                user_id = data.get('user')
+                domain_id = data.get('domain')
 
-            domain_id = data.get('domain')
+                result_of = Results.objects.get(
+                    Q(student=user_id) & Q(domain=domain_id))
 
-            result_sub = Results.objects.get(
-                Q(student=user) & Q(domain=domain_id))
+                result_of.result_checked = True
 
-            result_sub.discrepancies += 1
-            result_sub.save()
+                result_of.save()
 
-            remaining = 5 - result_sub.discrepancies
-
-            if(remaining == 0):
-                result_sub.submitted = True
-                result_sub.save()
-
-                return Response({'status': 200, 'message': 'Test Has Been Submitted'})
+                return Response({'message': 'Student Checking Done'}, status=200)
 
             else:
-                return Response({'status': 200, 'Discrepancies Remaining': remaining})
-
+                return Response({'error': 'User Not Authorized'}, status=404)
         except Exception as e:
             print(e)
-            return Response({'status': 404, 'error': 'Error'})
+            return Response({'error': 'Something Went Wrong'}, status=404)

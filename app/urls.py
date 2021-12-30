@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import AdminLoginView, CommentAdminView, IncDis, MarkLongAdmin, QuesAnsAdminView, QuestionAddView, LongResView, AdminRegisterView, AnswerSubmissionView, MarkLongAdmin, RegisterView, SubResView, TestSubmitted, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView
+from .views import AdminLoginView, CommentAdminView, IncDis, MarkLongAdmin, QuesAnsAdminView, LongResView, AdminRegisterView, AnswerSubmissionView, MarkLongAdmin, RegisterView, SubResView, TestSubmitted, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView, Student_check
 
 urlpatterns = [
     path('register/', RegisterView.as_view()),
@@ -12,7 +12,6 @@ urlpatterns = [
     path('a/<str:topic>/', SubResView.as_view(), name='subresult'),
     path('user/', UserDetView.as_view(), name='userdet'),
     path('sub/', AnswerSubmissionView.as_view(), name='answersub'),
-    path('quesadd/', QuestionAddView.as_view(), name='questionadd'),
     path('adminregister/', AdminRegisterView.as_view(), name='admin_register'),
     path('adminlogin/', AdminLoginView.as_view(), name='adminlogin'),
     path('a/<str:topic>/<str:student>/', LongResView.as_view(), name='longres'),
@@ -22,4 +21,5 @@ urlpatterns = [
          QuesAnsAdminView.as_view(), name='quesansadmin'),
     path('addcommentsadmin/', CommentAdminView.as_view(), name='admincomment'),
     path('incdes/', IncDis.as_view(), name='incdes'),
+    path('studentcheck/', Student_check.as_view(), name='checking')
 ]
