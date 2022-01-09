@@ -442,10 +442,8 @@ class MarkLongAdmin(APIView):
 
             mark_ofques = data.get('marks')
 
-            print(ques_of.mark_each)
-
             if(mark_ofques > ques_of.mark_each):
-                return Response({'error': 'Cannot award more than the maximum marks'}, status=403)
+                return Response({'error': 'Cannot award more than the maximum marks'}, status=200)
 
             else:
                 sub.mark_ques = mark_ofques
@@ -501,7 +499,7 @@ class CommentAdminView(APIView):
                     Q(student=user_id) & Q(domain=domain_id))
 
                 result_sub.comments = comment
-
+                result_sub.result_checked = True
                 result_sub.save()
 
                 return Response({'message': 'Comments added'}, status=200)
