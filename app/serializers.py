@@ -106,7 +106,7 @@ class FinalResSerializer(serializers.ModelSerializer):
     class Meta:
         model = Results
         fields = ['student', 'MCQ_score', 'Long_Ans_Score',
-                  'Total', 'comments', 'submitted', 'domain']
+                  'Total', 'comments', 'submitted', 'domain', 'result_checked']
 
 
 class AnsSubSerializer(serializers.ModelSerializer):
