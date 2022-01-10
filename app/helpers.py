@@ -1,16 +1,11 @@
 import random
-from django.core.cache import cache
 import smtplib
 from email.message import EmailMessage
 
 
 def send_otp_to_email(mail, user_obj):
-
-    if cache.get(mail):
-        return False, cache.ttl(mail)
     try:
         otp_to_send = random.randint(100000, 999999)
-        cache.set(mail, otp_to_send, timeout=60)
         user_obj.otp = otp_to_send
         rec_email = user_obj.email
         sender_email = "iete.vit2021@gmail.com"
