@@ -527,11 +527,38 @@ class Student_check(APIView):
                 result_of = Results.objects.get(
                     Q(student=user_id) & Q(domain=domain_id))
 
-                result_of.result_checked = True
-
                 result_of.save()
 
                 return Response({'message': 'Student Checking Done'}, status=200)
+
+            else:
+                return Response({'error': 'User Not Authorized'}, status=404)
+        except Exception as e:
+            print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
+
+
+# All the questions checked for the student
+class AdminStudentCheck(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = request.user
+            data = request.data
+            if(user.is_admin == True):
+                user_id = data.get('user')
+                domain_id = data.get('domain')
+
+                result_sub = Results.objects.get(
+                    Q(student=user_id) & Q(domain=domain_id))
+
+                result_sub.result_checked = True
+                result_sub.save()
+
+                return Response({'message': 'Answers Checked for the Student'}, status=200)
 
             else:
                 return Response({'error': 'User Not Authorized'}, status=404)
