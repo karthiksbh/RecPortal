@@ -22,7 +22,7 @@ def send_otp_to_email(mail, user_obj):
         msg['To'] = rec_email
 
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.login(sender_email, "Velk@1205")
+        server.login(sender_email, "recportaliete@2021")
         server.send_message(msg)
         server.quit()
 
