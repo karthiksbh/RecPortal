@@ -26,9 +26,9 @@ def send_otp_to_email(mail, user_obj):
         server.send_message(msg)
         server.quit()
 
-        print("This is the user obj:======================== " + user_obj)
+        print("This is the user obj:======================== " + str(user_obj))
 
-        print("=======================" + otp_to_send)
+        print("=======================" + str(otp_to_send))
 
         user_obj.save()
 
