@@ -212,7 +212,7 @@ class QuizQues(APIView):
                 if(hours >= 1 or minutes > time):
                     student_exists.submitted = True
                     student_exists.save()
-                    return Response({'message': 'Test Submitted'}, status=200)
+                    return Response({'message': 'Test Submitted'}, status=403)
                 else:
                     return Response({'data': serializer.data, 'starttime': starttime, 'totalduration': time}, status=200)
 
@@ -499,7 +499,6 @@ class CommentAdminView(APIView):
                     Q(student=user_id) & Q(domain=domain_id))
 
                 result_sub.comments = comment
-                result_sub.result_checked = True
                 result_sub.save()
 
                 return Response({'message': 'Comments added'}, status=200)
@@ -565,3 +564,20 @@ class AdminStudentCheck(APIView):
         except Exception as e:
             print(e)
             return Response({'error': 'Something Went Wrong'}, status=404)
+
+
+# # To count the students in each domain and send
+# class StudentCount(APIView):
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         try:
+#             CSE_students = Results.objects.raw(
+#                 "SELECT count(*) from app_results")
+
+#             return Response({'message': CSE_students}, status=200)
+
+#         except Exception as e:
+#             print(e)
+#             return Response({'error': 'Something Went Wrong'}, status=404)
