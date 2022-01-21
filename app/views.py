@@ -584,7 +584,8 @@ class StudentCount(APIView):
                 "SELECT count(*) from app_results WHERE result_checked is True")
             row = cursor.fetchone()
             print(
-                "===================================================================================================" + str(row[0]))
+                "===================================================================================================")
+            print(row[0])
 
             cursor.execute(
                 "SELECT count(*) from app_results WHERE result_checked is False")
