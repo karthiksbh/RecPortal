@@ -592,27 +592,27 @@ class StudentCount(APIView):
             row_2 = cursor.fetchone()
 
             cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp is 1")
+                "SELECT count(*) from app_results WHERE domain_temp=1")
             CSE_students = cursor.fetchone()
 
             cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp is 2")
+                "SELECT count(*) from app_results WHERE domain_temp=2")
             ECE_students = cursor.fetchone()
 
             cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp is 3")
+                "SELECT count(*) from app_results WHERE domain_temp=3")
             EDITORIAL_students = cursor.fetchone()
 
             cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp is 4")
+                "SELECT count(*) from app_results WHERE domain_temp =4")
             DSN_students = cursor.fetchone()
 
             cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp is 5")
+                "SELECT count(*) from app_results WHERE domain_temp =5")
             MGT_students = cursor.fetchone()
 
             cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp is 6")
+                "SELECT count(*) from app_results WHERE domain_temp =6")
             PGT_students = cursor.fetchone()
 
             return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'Checked Results': row[0], 'Not Checked Results': row_2[0]}, status=200)
