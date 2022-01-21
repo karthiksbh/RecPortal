@@ -613,7 +613,7 @@ class StudentCount(APIView):
                     "SELECT count(*) from app_results WHERE domain_temp =6")
                 PGT_students = cursor.fetchone()
 
-                return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'Checked Results': row[0], 'Not Checked Results': row_2[0]}, status=200)
+                return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'checked': row[0], 'not_checked': row_2[0]}, status=200)
             else:
                 return Response({'error': 'User Not Authorized'}, status=404)
 
