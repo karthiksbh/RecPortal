@@ -1,3 +1,5 @@
+from xml.sax import xmlreader
+from django.db import connection, connections
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import authentication, response
 from rest_framework.response import Response
@@ -14,6 +16,7 @@ import datetime
 from django.db.models import Q
 from datetime import datetime
 from datetime import date
+import sqlite3
 my_date = date(2021, 3, 2)
 
 
@@ -165,6 +168,8 @@ class QuizQues(APIView):
         data = request.data
         user = request.user
         domain_id = data.get('domain')
+        temp_domain = domain_id
+        print(domain_id)
         question = Question.objects.filter(
             domain=domain_id)
         user = User.objects.filter(id=user.id).first()
@@ -184,7 +189,7 @@ class QuizQues(APIView):
 
         if(student_exists == False):
             sub_data = Results(student=user, domain=domain_id, MCQ_score=0, Long_Ans_Score=0, Total=0,
-                               submitted=False, start_time=current_time)
+                               submitted=False, start_time=current_time, domain_temp=temp_domain)
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
@@ -566,18 +571,49 @@ class AdminStudentCheck(APIView):
             return Response({'error': 'Something Went Wrong'}, status=404)
 
 
-# # To count the students in each domain and send
-# class StudentCount(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
+# To count the students in each domain and send
+class StudentCount(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, request):
-#         try:
-#             CSE_students = Results.objects.raw(
-#                 "SELECT count(*) from app_results")
+    def get(self, request):
+        try:
 
-#             return Response({'message': CSE_students}, status=200)
+            cursor = connection.cursor()
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE result_checked is True")
+            row = cursor.fetchone()
 
-#         except Exception as e:
-#             print(e)
-#             return Response({'error': 'Something Went Wrong'}, status=404)
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE result_checked is False")
+            row_2 = cursor.fetchone()
+
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE domain_temp is 1")
+            CSE_students = cursor.fetchone()
+
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE domain_temp is 2")
+            ECE_students = cursor.fetchone()
+
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE domain_temp is 3")
+            EDITORIAL_students = cursor.fetchone()
+
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE domain_temp is 4")
+            DSN_students = cursor.fetchone()
+
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE domain_temp is 5")
+            MGT_students = cursor.fetchone()
+
+            cursor.execute(
+                "SELECT count(*) from app_results WHERE domain_temp is 6")
+            PGT_students = cursor.fetchone()
+
+            return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'Checked Results': row[0], 'Not Checked Results': row_2[0]}, status=200)
+
+        except Exception as e:
+            print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)

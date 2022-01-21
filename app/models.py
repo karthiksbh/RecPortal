@@ -168,6 +168,7 @@ class Results(models.Model):
     start_time = models.TimeField()
     discrepancies = models.IntegerField(default=0)
     result_checked = models.BooleanField(default=False)
+    domain_temp = models.IntegerField(default=1)
 
     def __str__(self):
         return str(self.student)
