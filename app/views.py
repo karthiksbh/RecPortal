@@ -578,46 +578,45 @@ class StudentCount(APIView):
 
     def get(self, request):
         try:
+            user = request.user
+            if(user.is_admin == True):
+                cursor = connection.cursor()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE result_checked is True")
+                row = cursor.fetchone()
 
-            cursor = connection.cursor()
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE result_checked is True")
-            row = cursor.fetchone()
-            print(
-                "===================================================================================================")
-            print(row[0])
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE result_checked is False")
+                row_2 = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE result_checked is False")
-            row_2 = cursor.fetchone()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE domain_temp=1")
+                CSE_students = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp=1")
-            CSE_students = cursor.fetchone()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE domain_temp=2")
+                ECE_students = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp=2")
-            ECE_students = cursor.fetchone()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE domain_temp=3")
+                EDITORIAL_students = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp=3")
-            EDITORIAL_students = cursor.fetchone()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE domain_temp =4")
+                DSN_students = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp =4")
-            DSN_students = cursor.fetchone()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE domain_temp =5")
+                MGT_students = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp =5")
-            MGT_students = cursor.fetchone()
+                cursor.execute(
+                    "SELECT count(*) from app_results WHERE domain_temp =6")
+                PGT_students = cursor.fetchone()
 
-            cursor.execute(
-                "SELECT count(*) from app_results WHERE domain_temp =6")
-            PGT_students = cursor.fetchone()
-
-            return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'Checked Results': row[0], 'Not Checked Results': row_2[0]}, status=200)
+                return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'Checked Results': row[0], 'Not Checked Results': row_2[0]}, status=200)
+            else:
+                return Response({'error': 'User Not Authorized'}, status=404)
 
         except Exception as e:
-            print("======================s=s=s=s=s=s==s==========")
             print(e)
             return Response({'error': 'Something Went Wrong'}, status=404)
