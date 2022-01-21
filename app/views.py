@@ -583,6 +583,8 @@ class StudentCount(APIView):
             cursor.execute(
                 "SELECT count(*) from app_results WHERE result_checked is True")
             row = cursor.fetchone()
+            print(
+                "=========================================================" + row[0])
 
             cursor.execute(
                 "SELECT count(*) from app_results WHERE result_checked is False")
@@ -615,5 +617,6 @@ class StudentCount(APIView):
             return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'Checked Results': row[0], 'Not Checked Results': row_2[0]}, status=200)
 
         except Exception as e:
+            print("======================s=s=s=s=s=s==s==========")
             print(e)
             return Response({'error': 'Something Went Wrong'}, status=404)
