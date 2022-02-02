@@ -3,6 +3,8 @@ from django.db.models.fields import related
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .manager import UserManager
+import datetime
+d = datetime.date(1997, 10, 19)
 
 
 class User(AbstractUser):
@@ -169,6 +171,7 @@ class Results(models.Model):
     discrepancies = models.IntegerField(default=0)
     result_checked = models.BooleanField(default=False)
     domain_temp = models.IntegerField(default=1)
+    date_start = models.DateField(default=d)
 
     def __str__(self):
         return str(self.student)

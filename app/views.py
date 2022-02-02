@@ -180,6 +180,8 @@ class QuizQues(APIView):
 
         domain_id = Domain.objects.filter(id=domain_id).first()
 
+        today = date.today()
+
         student_exists = False
         student_exists = Results.objects.filter(
             student=user, domain=domain_id).exists()
@@ -189,7 +191,7 @@ class QuizQues(APIView):
 
         if(student_exists == False):
             sub_data = Results(student=user, domain=domain_id, MCQ_score=0, Long_Ans_Score=0, Total=0,
-                               submitted=False, start_time=current_time, domain_temp=temp_domain)
+                               submitted=False, start_time=current_time, domain_temp=temp_domain, date_start=today)
             sub_data.save()
             serializer = QuizQuesSerializer(question, many=True)
 
@@ -214,7 +216,7 @@ class QuizQues(APIView):
                 hours = rem_time[1]
                 minutes = rem_time[2]
 
-                if(hours >= 1 or minutes > time):
+                if(hours >= 1 or minutes > time or today != student_exists.date_start):
                     student_exists.submitted = True
                     student_exists.save()
                     return Response({'message': 'Test Submitted'}, status=403)
