@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from .manager import UserManager
 import datetime
 d = datetime.date(1997, 10, 19)
+# These are the models
 
 
 class User(AbstractUser):
