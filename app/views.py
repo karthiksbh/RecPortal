@@ -93,6 +93,47 @@ class Generate_OTP(APIView):
         return Response({'error': 'Something Went Wrong'}, status=404)
 
 
+def tests_submitted(user):
+    try:
+        tests_done = []
+        CSE_exists = False
+        CSE_exists = Results.objects.filter(
+            student=user, domain=1).exists()
+        if(CSE_exists == True):
+            tests_done.append("TECH CSE")
+
+        MGT_exists = False
+        MGT_exists = Results.objects.filter(
+            student=user, domain=5).exists()
+        if(MGT_exists == True):
+            tests_done.append("Management")
+
+        ECE_exists = False
+        ECE_exists = Results.objects.filter(
+            student=user, domain=2).exists()
+        if(ECE_exists == True):
+            tests_done.append("TECH ECE")
+
+        Edit_exists = False
+        Edit_exists = Results.objects.filter(
+            student=user, domain=3).exists()
+        if(Edit_exists == True):
+            tests_done.append("Editorial")
+
+        Design_exists = False
+        Design_exists = Results.objects.filter(
+            student=user, domain=4).exists()
+        if(Design_exists == True):
+            tests_done.append("Design")
+
+        print(tests_done)
+
+        return tests_done
+
+    except Exception as e:
+        print(e)
+
+
 # User Login
 class LoginView(APIView):
     def post(self, request):
@@ -100,6 +141,10 @@ class LoginView(APIView):
         email = request.data['email']
         password = request.data['password']
         user = User.objects.filter(email=email, is_admin=False).first()
+
+        if user is not None:
+            print(user)
+            done = tests_submitted(user)
 
         if user is None:
             raise AuthenticationFailed('User Not Found!')
@@ -109,7 +154,7 @@ class LoginView(APIView):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({'jwt': str(refresh.access_token)}, status=200)
+        return Response({'jwt': str(refresh.access_token), 'submitted': done}, status=200)
 
 
 # Admin Login
@@ -611,13 +656,24 @@ class StudentCount(APIView):
                     "SELECT count(*) from app_results WHERE domain_temp =5")
                 MGT_students = cursor.fetchone()
 
-                cursor.execute(
-                    "SELECT count(*) from app_results WHERE domain_temp =6")
-                PGT_students = cursor.fetchone()
-
-                return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'Photography': PGT_students[0], 'checked': row[0], 'not_checked': row_2[0]}, status=200)
+                return Response({'CSE': CSE_students[0], 'ECE': ECE_students[0], 'Editorial': EDITORIAL_students[0], 'Design': DSN_students[0], 'Management': MGT_students[0], 'checked': row[0], 'not_checked': row_2[0]}, status=200)
             else:
                 return Response({'error': 'User Not Authorized'}, status=404)
+
+        except Exception as e:
+            print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
+
+
+class TestsSubmitted(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = request.user
+            done = tests_submitted(user)
+            return Response({'submitted': done}, status=200)
 
         except Exception as e:
             print(e)

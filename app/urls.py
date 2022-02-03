@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import AdminLoginView, CommentAdminView, StudentCount, Generate_OTP, IncDis, MarkLongAdmin, QuesAnsAdminView, LongResView, AdminRegisterView, AnswerSubmissionView, MarkLongAdmin, RegisterView, SubResView, TestSubmitted, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView, Student_check, AdminStudentCheck
+from .views import AdminLoginView, CommentAdminView, StudentCount, Generate_OTP, IncDis, MarkLongAdmin, QuesAnsAdminView, LongResView, AdminRegisterView, AnswerSubmissionView, MarkLongAdmin, RegisterView, SubResView, TestSubmitted, TestsSubmitted, VerifyOTP, LoginView, LogoutView, QuizQues, UserDetView, Student_check, AdminStudentCheck
 
 urlpatterns = [
     path('register/', RegisterView.as_view()),
@@ -25,4 +25,5 @@ urlpatterns = [
     path('generateotp/', Generate_OTP.as_view(), name='otpgen'),
     path('allanswerscheck/', AdminStudentCheck.as_view(), name='answerscheck'),
     path('studentcount/', StudentCount.as_view(), name='studentcount'),
+    path('testdone/', TestsSubmitted.as_view(), name='testsdone'),
 ]

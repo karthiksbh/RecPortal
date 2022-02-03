@@ -15,7 +15,7 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=12)
+    phone = models.CharField(max_length=25)
     is_email_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
 
