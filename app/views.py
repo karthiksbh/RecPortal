@@ -98,31 +98,31 @@ def tests_submitted(user):
         tests_done = []
         CSE_exists = False
         CSE_exists = Results.objects.filter(
-            student=user, domain=1).exists()
+            student=user, domain=1, submitted=True).exists()
         if(CSE_exists == True):
             tests_done.append("TECH CSE")
 
         MGT_exists = False
         MGT_exists = Results.objects.filter(
-            student=user, domain=5).exists()
+            student=user, domain=5, submitted=True).exists()
         if(MGT_exists == True):
             tests_done.append("Management")
 
         ECE_exists = False
         ECE_exists = Results.objects.filter(
-            student=user, domain=2).exists()
+            student=user, domain=2, submitted=True).exists()
         if(ECE_exists == True):
             tests_done.append("TECH ECE")
 
         Edit_exists = False
         Edit_exists = Results.objects.filter(
-            student=user, domain=3).exists()
+            student=user, domain=3, submitted=True).exists()
         if(Edit_exists == True):
             tests_done.append("Editorial")
 
         Design_exists = False
         Design_exists = Results.objects.filter(
-            student=user, domain=4).exists()
+            student=user, domain=4, submitted=True).exists()
         if(Design_exists == True):
             tests_done.append("Design")
 
