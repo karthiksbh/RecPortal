@@ -142,10 +142,6 @@ class LoginView(APIView):
         password = request.data['password']
         user = User.objects.filter(email=email, is_admin=False).first()
 
-        if user is not None:
-            print(user)
-            done = tests_submitted(user)
-
         if user is None:
             raise AuthenticationFailed('User Not Found!')
 
@@ -154,7 +150,7 @@ class LoginView(APIView):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({'jwt': str(refresh.access_token), 'submitted': done}, status=200)
+        return Response({'jwt': str(refresh.access_token)}, status=200)
 
 
 # Admin Login
