@@ -100,7 +100,7 @@ def tests_submitted(user):
         CSE_exists = Results.objects.filter(
             student=user, domain=1, submitted=True).exists()
         if(CSE_exists == True):
-            tests_done.append("TECH CSE")
+            tests_done.append("Tech CSE")
 
         MGT_exists = False
         MGT_exists = Results.objects.filter(
@@ -112,7 +112,7 @@ def tests_submitted(user):
         ECE_exists = Results.objects.filter(
             student=user, domain=2, submitted=True).exists()
         if(ECE_exists == True):
-            tests_done.append("TECH ECE")
+            tests_done.append("Tech ECE")
 
         Edit_exists = False
         Edit_exists = Results.objects.filter(
