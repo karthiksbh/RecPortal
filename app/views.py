@@ -45,14 +45,11 @@ class AdminRegisterView(APIView):
     def post(self, request):
         try:
             email = request.data['email']
-            if(email.find('@vitstudent.ac.in') == -1):
-                return Response({'message': 'Please Enter Your VIT Email ID'}, status=404)
-            else:
-                serializer = AdminSerializer(data=request.data)
-                if not serializer.is_valid():
-                    return Response({'errors': serializer.errors}, status=403)
-                serializer.save()
-                return Response({'message': 'Admin Registered'}, status=200)
+            serializer = AdminSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response({'errors': serializer.errors}, status=403)
+            serializer.save()
+            return Response({'message': 'Admin Registered'}, status=200)
 
         except Exception as e:
             print(e)
