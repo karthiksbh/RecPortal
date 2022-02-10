@@ -123,8 +123,6 @@ def tests_submitted(user):
         if(Design_exists == True):
             tests_done.append("Design")
 
-        print(tests_done)
-
         return tests_done
 
     except Exception as e:
@@ -667,6 +665,40 @@ class TestsSubmitted(APIView):
             user = request.user
             done = tests_submitted(user)
             return Response({'submitted': done}, status=200)
+
+        except Exception as e:
+            print(e)
+            return Response({'error': 'Something Went Wrong'}, status=404)
+
+
+class getTime(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            data = request.data
+            user = request.user
+            domain_id = data.get('domain')
+            domain_info = Domain.objects.get(Q(domain_name=domain_id))
+            time_duration = domain_info.quiz_time
+
+            student_exists = False
+            student_exists = Results.objects.filter(
+                student=user, domain=domain_id).exists()
+
+            if(student_exists == True):
+                result_sub = Results.objects.get(
+                    Q(student=user) & Q(domain=domain_id))
+
+                if(result_sub == True):
+                    return Response({'message': 'Test Has Been Submitted'}, status=403)
+
+                else:
+                    return Response({'totalduration': time_duration}, status=200)
+
+            else:
+                return Response({'totalduration': time_duration}, status=200)
 
         except Exception as e:
             print(e)
