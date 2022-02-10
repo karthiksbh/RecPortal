@@ -680,18 +680,24 @@ class getTime(APIView):
             data = request.data
             user = request.user
             domain_id = data.get('domain')
+            temp_domain = domain_id
+            print(domain_id)
+            user = User.objects.filter(id=user.id).first()
+
             domain_id = Domain.objects.filter(id=domain_id).first()
 
             domain_info = Domain.objects.get(Q(domain_name=domain_id))
             time = domain_info.quiz_time
 
+            print(time)
+
             student_exists = False
             student_exists = Results.objects.filter(
-                student=user, domain=domain_id).exists()
+                student=user, domain=temp_domain).exists()
 
             if(student_exists == True):
                 result_sub = Results.objects.get(
-                    Q(student=user) & Q(id=domain_id))
+                    Q(student=user) & Q(id=temp_domain))
 
                 if(result_sub.submitted == True):
                     return Response({'message': 'Test Has Been Submitted'}, status=403)
