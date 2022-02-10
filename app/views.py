@@ -691,7 +691,7 @@ class getTime(APIView):
                 result_sub = Results.objects.get(
                     Q(student=user) & Q(domain=domain_id))
 
-                if(result_sub == True):
+                if(result_sub.submitted == True):
                     return Response({'message': 'Test Has Been Submitted'}, status=403)
 
                 else:
