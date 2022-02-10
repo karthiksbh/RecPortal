@@ -55,7 +55,7 @@ class Question(models.Model):
         choices=QUESTION_TYPE, default=0, verbose_name=_("Question Type"))
     mark_each = models.IntegerField(
         default=0, verbose_name=_("Mark for the Question"))
-    ques_main = models.CharField(max_length=255, verbose_name=_("Question"))
+    ques_main = models.TextField(verbose_name=_("Question"))
 
     def __str__(self):
         return str(self.id)
