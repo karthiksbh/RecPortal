@@ -675,7 +675,7 @@ class getTime(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def post(self, request):
         try:
             data = request.data
             user = request.user
