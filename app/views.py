@@ -682,6 +682,8 @@ class getTime(APIView):
             domain_id = data.get('domain')
             temp_domain = domain_id
             print(domain_id)
+            question = Question.objects.filter(
+                domain=domain_id)
             user = User.objects.filter(id=user.id).first()
 
             domain_id = Domain.objects.filter(id=domain_id).first()
@@ -694,17 +696,18 @@ class getTime(APIView):
             time = domain_info.quiz_time
 
             if(student_exists == False):
-                return Response({'totalduration': time}, status=200)
+                serializer = QuizQuesSerializer(question, many=True)
+
+                return Response({'data': serializer.data, 'totalduration': time}, status=200)
+
             else:
                 student_exists = Results.objects.get(
                     student=user, domain=domain_id)
 
                 if(student_exists.submitted == True):
                     return Response({'message': 'Test Submitted'}, status=200)
-
                 else:
                     return Response({'totalduration': time}, status=200)
-
         except Exception as e:
             print(e)
-            return Response({'error': e}, status=404)
+            return Response({'data': e}, status=404)
