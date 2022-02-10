@@ -680,8 +680,10 @@ class getTime(APIView):
             data = request.data
             user = request.user
             domain_id = data.get('domain')
+            domain_id = Domain.objects.filter(id=domain_id).first()
+
             domain_info = Domain.objects.get(Q(domain_name=domain_id))
-            time_duration = domain_info.quiz_time
+            time = domain_info.quiz_time
 
             student_exists = False
             student_exists = Results.objects.filter(
@@ -689,16 +691,16 @@ class getTime(APIView):
 
             if(student_exists == True):
                 result_sub = Results.objects.get(
-                    Q(student=user) & Q(domain=domain_id))
+                    Q(student=user) & Q(id=domain_id))
 
                 if(result_sub.submitted == True):
                     return Response({'message': 'Test Has Been Submitted'}, status=403)
 
                 else:
-                    return Response({'totalduration': time_duration}, status=200)
+                    return Response({'totalduration': time}, status=200)
 
             else:
-                return Response({'totalduration': time_duration}, status=200)
+                return Response({'totalduration': time}, status=200)
 
         except Exception as e:
             print(e)
