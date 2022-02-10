@@ -707,7 +707,8 @@ class getTime(APIView):
                 if(student_exists.submitted == True):
                     return Response({'message': 'Test Submitted'}, status=200)
                 else:
-                    return Response({'totalduration': time}, status=200)
+                    serializer = QuizQuesSerializer(question, many=True)
+                    return Response({'data': serializer.data, 'totalduration': time}, status=200)
         except Exception as e:
             print(e)
             return Response({'data': e}, status=404)
