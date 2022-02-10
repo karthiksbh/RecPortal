@@ -702,4 +702,4 @@ class getTime(APIView):
 
         except Exception as e:
             print(e)
-            return Response({'error': 'Something Went Wrong'}, status=404)
+            return Response({'error': e}, status=404)
