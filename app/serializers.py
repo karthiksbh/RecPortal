@@ -70,6 +70,8 @@ class QuizQuesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
+        print("adasdasdadsadasdas")
+        print(Question.ques_main)
         fields = [
             'id',
             'quiz',
