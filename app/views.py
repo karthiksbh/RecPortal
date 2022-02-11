@@ -19,8 +19,9 @@ from datetime import date
 import sqlite3
 my_date = date(2021, 3, 2)
 
-
 # User Registration
+
+
 class RegisterView(APIView):
     def post(self, request):
         try:
@@ -325,15 +326,19 @@ class AnswerSubmissionView(APIView):
             if(ans == None):
                 ans = "mnxjdiffjdkksasdada"
 
-            stu_result = Results.objects.get(
-                Q(student=user) & Q(domain=domain_id))
+            stu_result = Results.objects.filter(
+                Q(student=user) & Q(domain=domain_id))[0]
+
+            print(stu_result)
+            print(stu_result.id)
 
             stu_marks = Question.objects.get(
                 Q(id=ques_id))
 
-            student_submitted = False
             student_submitted = Submission.objects.filter(
                 sub_student=user, domain=domain_id, question=ques_of).exists()
+
+            print(student_submitted)
 
             if(student_submitted == False):
 
@@ -392,7 +397,7 @@ class AnswerSubmissionView(APIView):
                 return Response({'message': 'Answer Submitted'}, status=200)
 
         except Exception as e:
-
+            print(e)
             return Response({'error': 'Something Went Wrong'}, status=404)
 
 
@@ -429,6 +434,7 @@ class LongResView(APIView):
 
     def get(self, request, **kwargs):
         user = request.user
+        # TODO Submission [0]
         if(user.is_admin == True):
             res = Submission.objects.filter(
                 domain=kwargs['topic'], sub_student=kwargs['student'])
