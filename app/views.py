@@ -218,7 +218,7 @@ class QuizQues(APIView):
 
         today = date.today()
 
-        student_exists = False
+        # student_exists = False
         student_exists = Results.objects.filter(
             student=user, domain=domain_id).exists()
 
