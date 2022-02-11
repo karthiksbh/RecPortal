@@ -327,7 +327,9 @@ class AnswerSubmissionView(APIView):
                 ans = "mnxjdiffjdkksasdada"
 
             stu_result = Results.objects.filter(
-                Q(student=user) & Q(domain=domain_id))[0]
+                Q(student=user) & Q(domain=domain_id))
+
+            stu_result = stu_result.earliest('id')
 
             print(stu_result)
             print(stu_result.id)
