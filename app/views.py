@@ -94,31 +94,27 @@ class Generate_OTP(APIView):
 def tests_submitted(user):
     try:
         tests_done = []
-        CSE_exists = False
         CSE_exists = Results.objects.filter(
             student=user, domain=1, submitted=True).exists()
+
         if(CSE_exists == True):
             tests_done.append("Tech CSE")
 
-        MGT_exists = False
         MGT_exists = Results.objects.filter(
             student=user, domain=5, submitted=True).exists()
         if(MGT_exists == True):
             tests_done.append("Management")
 
-        ECE_exists = False
         ECE_exists = Results.objects.filter(
             student=user, domain=2, submitted=True).exists()
         if(ECE_exists == True):
             tests_done.append("Tech ECE")
 
-        Edit_exists = False
         Edit_exists = Results.objects.filter(
             student=user, domain=3, submitted=True).exists()
         if(Edit_exists == True):
             tests_done.append("Editorial")
 
-        Design_exists = False
         Design_exists = Results.objects.filter(
             student=user, domain=4, submitted=True).exists()
         if(Design_exists == True):
@@ -415,8 +411,10 @@ class TestSubmitted(APIView):
 
             domain_id = data.get('domain')
 
-            result_sub = Results.objects.get(
+            result_sub = Results.objects.filter(
                 Q(student=user) & Q(domain=domain_id))
+
+            result_sub = result_sub.earliest('id')
 
             result_sub.submitted = True
             result_sub.save()
