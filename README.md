@@ -62,7 +62,8 @@ Includes a quiz application built on the Django Rest Framework that enables user
 <a id="documentation"></a>
 
 ## 📄 Documentation
-- Documentation listed to Postman link :- https://documenter.getpostman.com/view/18159368/UVC8CRdf
+- API Documentation listed to Postman link :- https://documenter.getpostman.com/view/18159368/UVC8CRdf
+- Database Diagram listed to DBDiagram link :- https://dbdiagram.io/d/6314ee740911f91ba5319c36
 
 <a id="bug"></a>
 
