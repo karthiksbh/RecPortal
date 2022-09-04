@@ -19,7 +19,7 @@ Feel free to [open an issue](https://github.com/karthiksbh/RecPortal/issues) on 
 ## ⭐ Feature Request
 
 - Feel free to [Open an issue](https://github.com/karthiksbh/RecPortal/issues) on GitHub to request any additional features you might need for your use case.
-- Connect with me on [LinkedIn]([https://www.linkedin.com/in/kolhepawan/](https://www.linkedin.com/in/karthik-srinivas-bhallamudi-b5b535203)). Would love to know about your opinion. ❤️
+- Connect with me on [LinkedIn](https://www.linkedin.com/in/karthik-srinivas-bhallamudi-b5b535203/). Would love to know about your opinion. ❤️
 
 <a id="license"></a>
 
