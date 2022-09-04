@@ -23,9 +23,10 @@ Includes a quiz application built on the Django Rest Framework that enables user
  
  ### Project Folder(recportal): 
  
+ Contains configuration files of the project.
+ 
  * manage.py
  
- Contains configuration files of the project.
 *  __init.py_
 *  settings.py
 *  urls.py
