@@ -1,7 +1,5 @@
 from django.contrib import admin
-from . import models
-from .models import User, Domain, Question, Answer, QuestionsTags, Submission, Results
-
+from .models import User,Domain,Answer,Question,QuestionsTags,Submission,Results
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -23,7 +21,7 @@ class DomAdmin(admin.ModelAdmin):
 
 
 class AnswerInlineModel(admin.TabularInline):
-    model = models.Answer
+    model = Answer
     fields = [
         'option',
         'is_right'
@@ -31,7 +29,7 @@ class AnswerInlineModel(admin.TabularInline):
 
 
 class TagsInlineModel(admin.TabularInline):
-    model = models.QuestionsTags
+    model = QuestionsTags
     fields = [
         'tags',
     ]

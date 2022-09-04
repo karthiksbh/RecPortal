@@ -3,7 +3,6 @@ from rest_framework import serializers
 from app.helpers import send_otp_to_email
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-
 User = get_user_model()
 
 
@@ -43,10 +42,7 @@ class QuizSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Domain
-        fields = [
-            'id',
-            'domain_name',
-        ]
+        fields = ['id', 'domain_name']
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -56,12 +52,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Answer
-        fields = [
-            'option',
-        ]
+        fields = ['option']
 
 
 class QuizQuesSerializer(serializers.ModelSerializer):
@@ -70,15 +63,7 @@ class QuizQuesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        print("adasdasdadsadasdas")
-        print(Question.ques_main)
-        fields = [
-            'id',
-            'quiz',
-            'ques_main',
-            'ques_type',
-            'options',
-        ]
+        fields = ['id', 'quiz', 'ques_main', 'ques_type', 'options']
 
 
 class QuesSerializer(serializers.ModelSerializer):
@@ -86,20 +71,18 @@ class QuesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = [
-            'id',
-            'ques_main',
-            'mark_each',
-            'ques_type',
-            'tag',
-        ]
+        fields = ['id', 'ques_main',
+                  'mark_each',
+                  'ques_type',
+                  'tag',
+                  ]
 
 
 class UserDetSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'reg_no',
-                  'email', 'phone', 'is_email_verified', 'is_admin']
+        fields = ['id', 'name', 'reg_no', 'email',
+                  'phone', 'is_email_verified', 'is_admin']
 
 
 class FinalResSerializer(serializers.ModelSerializer):
@@ -107,8 +90,8 @@ class FinalResSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Results
-        fields = ['student', 'MCQ_score', 'Long_Ans_Score',
-                  'Total', 'comments', 'submitted', 'domain', 'result_checked']
+        fields = ['student', 'MCQ_score', 'Long_Ans_Score', 'Total',
+                  'comments', 'submitted', 'domain', 'result_checked']
 
 
 class AnsSubSerializer(serializers.ModelSerializer):

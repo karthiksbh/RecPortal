@@ -1,11 +1,30 @@
+from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.db.models.fields import related
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .manager import UserManager
-import datetime
-d = datetime.date(1997, 10, 19)
-# These are the models
+
+
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Email is needed')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(('Super User must have is_staff as True'))
+        return self.create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):
@@ -28,7 +47,13 @@ class User(AbstractUser):
         return str(self.id)
 
 
+# Domain in which the user wants to give the test
 class Domain(models.Model):
+    class Meta:
+        verbose_name = _("Domain")
+        verbose_name_plural = _("Domains")
+        ordering = ['id']
+
     domain_name = models.CharField(max_length=255, unique=True)
     quiz_time = models.IntegerField()
 
@@ -43,7 +68,6 @@ QUESTION_TYPE = (
 
 
 class Question(models.Model):
-
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
@@ -62,7 +86,6 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-
     class Meta:
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
@@ -118,7 +141,6 @@ QUESTION_TAGS = (
 
 
 class QuestionsTags(models.Model):
-
     class Meta:
         verbose_name = _("Tags")
         verbose_name_plural = _("Tags")
@@ -175,7 +197,7 @@ class Results(models.Model):
     discrepancies = models.IntegerField(default=0)
     result_checked = models.BooleanField(default=False)
     domain_temp = models.IntegerField(default=1)
-    date_start = models.DateField(default=d)
+    date_start = models.DateField()
 
     def __str__(self):
         return str(self.student)

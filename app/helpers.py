@@ -11,7 +11,6 @@ def send_otp_to_email(mail, user_obj):
         sender_email = "iete.vit2021@gmail.com"
 
         otp = str(user_obj.otp)
-
         msg = EmailMessage()
         message = "Dear Student, Please use the following OTP " + \
             str(otp) + " to complete the email verification"
@@ -25,11 +24,6 @@ def send_otp_to_email(mail, user_obj):
         server.login(sender_email, "recportaliete@2021")
         server.send_message(msg)
         server.quit()
-
-        print("This is the user obj:======================== " + str(user_obj))
-
-        print("=======================" + str(otp_to_send))
-
         user_obj.save()
 
         return True, 0
