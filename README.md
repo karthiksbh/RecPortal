@@ -20,7 +20,6 @@ Includes a quiz application built on the Django Rest Framework that enables user
  
  ## 🏗️ Structure
  
- 
  ### Project Folder(recportal): 
  
  Contains configuration files of the project.
@@ -43,6 +42,22 @@ Includes a quiz application built on the Django Rest Framework that enables user
 *  views.py
 *  urls.py
 *  tests.py
+
+<a id="installation"></a>
+
+## ⚙️ Installation
+
+- Bring Up local setup
+- Clone the repo
+- Execute the following commands:  
+    `cd ..`  
+    `python -m venv venv`  
+    `venv\Scripts\activate`    
+    `pip install -r requirements.txt`  
+    `cd recportal`   
+    `python manage.py migrate`   
+    `python manage.py collectstatic`  
+    `python manage.py runserver`  
 
 <a id="bug"></a>
 
