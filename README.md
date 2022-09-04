@@ -25,8 +25,7 @@ Includes a quiz application built on the Django Rest Framework that enables user
  
  Contains configuration files of the project.
  
- * manage.py
- 
+* manage.py
 *  __init.py_
 *  settings.py
 *  urls.py
