@@ -16,6 +16,17 @@ Includes a quiz application built on the Django Rest Framework that enables user
 2) The system automatically verifies the responses and assigns the final quiz score.
 3) The portal was used by more than 300 students to give test.
  
+ <a id="structure"></a>
+ 
+ ## 🏗️ Structure
+ 
+ ### Project Folder(recportal):
+* manage.py
+*  __init.py_
+*  settings.py
+*  urls.py
+*  wsgi.py
+*  asgi.py
 
 <a id="bug"></a>
 
