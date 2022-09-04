@@ -32,6 +32,18 @@ Includes a quiz application built on the Django Rest Framework that enables user
 *  wsgi.py
 *  asgi.py
 
+### Application Folder(app): 
+ 
+ Contains configuration files of the particular app in this project.
+ 
+*  __init.py_
+*  admin.py
+*  apps.py
+*  models.py
+*  views.py
+*  urls.py
+*  tests.py
+
 <a id="bug"></a>
 
 ## 🐛 Bug Reporting
