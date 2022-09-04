@@ -4,6 +4,13 @@
 
 Includes a quiz application built on the Django Rest Framework that enables users to test their knowledge in the area of their interest. 
 
+- [Features](#features)
+- [Bug Reporting](#bug)
+- [Feature Request](#feature-request)
+- [License](#license)
+
+<a id="features"></a>
+
 ## 💡Features
   1) The portal is highly responsive and includes various security features like detecting Tab switch, JWT authentication for every API request , Auto submission on        test timeout etc.
   2) The system automatically verifies the responses and assigns the final quiz score.
