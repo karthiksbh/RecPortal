@@ -5,6 +5,9 @@
 Includes a quiz application built on the Django Rest Framework that enables users to test their knowledge in the area of their interest. 
 
 - [Features](#features)
+- [Structure](#structure)
+- [Installation](#installation)
+- [Documentation](#documentation)
 - [Bug Reporting](#bug)
 - [Feature Request](#feature-request)
 - [License](#license)
