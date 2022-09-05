@@ -8,9 +8,9 @@ import dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = "django-insecure-qx!zy9eo93!yq+(ye+&8y^u5^rz0d4t48^gko7u1m!4fx^l)0-"
+SECRET_KEY = os.environ.get('secret')
 
-DEBUG = True
+DEBUG = os.environ.get('debug')
 
 ALLOWED_HOSTS = []
 
@@ -148,4 +148,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+EMAIL_USE_TLS = True
+
+
 django_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']

@@ -1,6 +1,6 @@
 from .models import Answer, Domain, Question, QuestionsTags, User, Submission, Results
 from rest_framework import serializers
-from app.helpers import send_otp_to_email
+from app.utils import Util
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         print(user)
         print(user.email)
-        send_otp_to_email(user.email, user)
+        Util.send_otp_to_email(user.email, user)
         return user
 
 

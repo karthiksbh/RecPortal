@@ -15,14 +15,14 @@ class RegisterView(APIView):
         try:
             email = request.data['email']
             reg_no = request.data['reg_no']
-            if(email.find('@vitstudent.ac.in') == -1):
+            if (email.find('@vitstudent.ac.in') == -1):
                 return Response({'message': 'Please Enter Your VIT Email ID'}, status=404)
             else:
                 user_exists = User.objects.filter(email=email).exists()
-                if(user_exists==True):
+                if (user_exists == True):
                     return Response({'message': 'User with the given Email ID already exists'}, status=404)
                 regNo_exists = User.objects.filter(reg_no=reg_no).exists()
-                if(regNo_exists==True):
+                if (regNo_exists == True):
                     return Response({'message': 'User with the given Registration Number exists already exists'}, status=404)
                 serializer = UserSerializer(data=request.data)
                 if not serializer.is_valid():
@@ -68,7 +68,7 @@ class Generate_OTP(APIView):
     def get(self, request):
         try:
             user = request.user
-            send_otp_to_email(user.email, user)
+            Util.send_otp_to_email(user.email, user)
             return Response({'message': 'OTP Sent to the Mail'}, status=200)
 
         except Exception as e:
@@ -90,7 +90,7 @@ class LoginView(APIView):
                 raise AuthenticationFailed('Password is Incorrect!')
 
             refresh = RefreshToken.for_user(user)
-            return Response({'jwt': str(refresh.access_token),'refresh_token': str(refresh)}, status=200)
+            return Response({'jwt': str(refresh.access_token), 'refresh_token': str(refresh)}, status=200)
         except Exception as e:
             return Response({'error': 'Something Went Wrong'}, status=404)
 
@@ -109,7 +109,7 @@ class AdminLoginView(APIView):
                 raise AuthenticationFailed('Password is Incorrect!')
 
             refresh = RefreshToken.for_user(user)
-            return Response({'jwt': str(refresh.access_token),'refresh_token': str(refresh)}, status=200)
+            return Response({'jwt': str(refresh.access_token), 'refresh_token': str(refresh)}, status=200)
 
         except Exception as e:
             return Response({'error': 'Something Went Wrong'}, status=404)
@@ -135,27 +135,27 @@ def tests_submitted(user):
 
         CSE_exists = Results.objects.filter(
             student=user, domain=1, submitted=True).exists()
-        if(CSE_exists == True):
+        if (CSE_exists == True):
             tests_done.append("Tech CSE")
 
         MGT_exists = Results.objects.filter(
             student=user, domain=5, submitted=True).exists()
-        if(MGT_exists == True):
+        if (MGT_exists == True):
             tests_done.append("Management")
 
         ECE_exists = Results.objects.filter(
             student=user, domain=2, submitted=True).exists()
-        if(ECE_exists == True):
+        if (ECE_exists == True):
             tests_done.append("Tech ECE")
 
         Edit_exists = Results.objects.filter(
             student=user, domain=3, submitted=True).exists()
-        if(Edit_exists == True):
+        if (Edit_exists == True):
             tests_done.append("Editorial")
 
         Design_exists = Results.objects.filter(
             student=user, domain=4, submitted=True).exists()
-        if(Design_exists == True):
+        if (Design_exists == True):
             tests_done.append("Design")
 
         return tests_done
