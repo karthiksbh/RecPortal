@@ -45,9 +45,9 @@ Includes a quiz application built on the Django Rest Framework that enables user
 *  apps.py
 *  models.py
 *  views
-   - adminpanel.py
-   - quiz.py
-   - users.py
+ - adminpanel.py
+ - quiz.py
+ - users.py
 *  urls.py
 *  tests.py
 
