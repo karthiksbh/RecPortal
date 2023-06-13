@@ -8,9 +8,9 @@ import dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.environ.get('secret')
+SECRET_KEY = os.environ.get('SECRET')
 
-DEBUG = os.environ.get('debug')
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = []
 
