@@ -30,7 +30,7 @@ class RegisterView(APIView):
                 serializer.save()
                 return Response({'message': 'OTP sent to your mail'}, status=200)
         except Exception as e:
-            return Response({'error': 'Something Went Wrong'}, status=404)
+            return Response({'error': str(e)}, status=404)
 
 
 # Admin Registration: To register an Admin
@@ -60,7 +60,7 @@ class VerifyOTP(APIView):
                 return Response({'message': 'Email verified'}, status=200)
             return Response({'message': 'Incorrect OTP'}, status=403)
         except Exception as e:
-            return Response({'error': 'Something Went Wrong'}, status=404)
+            return Response({'error': str(e)}, status=404)
 
 
 # Generate OTP: Generate an OTP
@@ -72,7 +72,7 @@ class Generate_OTP(APIView):
             return Response({'message': 'OTP Sent to the Mail'}, status=200)
 
         except Exception as e:
-            return Response({'error': 'Something Went Wrong'}, status=404)
+            return Response({'error': str(e)}, status=404)
 
 
 # User Login: Login a regular User
@@ -92,7 +92,7 @@ class LoginView(APIView):
             refresh = RefreshToken.for_user(user)
             return Response({'jwt': str(refresh.access_token), 'refresh_token': str(refresh)}, status=200)
         except Exception as e:
-            return Response({'error': 'Something Went Wrong'}, status=404)
+            return Response({'error': str(e)}, status=404)
 
 
 # Admin Login: Login an Admin User
